@@ -1,0 +1,8 @@
+{
+  "track_id": "confluence_restricted_list_20260129",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-29T00:15:00Z",
+  "updated_at": "2026-01-29T00:15:00Z",
+  "description": "Integrate Confluence to fetch and sync restricted instruments list"
+}

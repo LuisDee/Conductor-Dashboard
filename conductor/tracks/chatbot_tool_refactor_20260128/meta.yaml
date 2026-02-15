@@ -1,0 +1,23 @@
+name: Chatbot Tool Refactor - Split Monolithic update_draft
+status: complete
+priority: medium
+created: 2026-01-28
+updated: 2026-01-29
+completed: 2026-01-29
+branch: DSS-4074
+tags:
+  - chatbot
+  - adk
+  - tools
+  - refactor
+progress_percent: 100
+progress:
+  phase1_tests: complete  # 54 behavior spec tests + 31 focused tool tests
+  phase2_tools: complete  # All 9 focused tools implemented
+  phase3_prompt: complete  # Simplified system prompt (~200 tokens vs ~1000+)
+  phase4_deprecate: complete  # update_draft marked deprecated with warning
+test_results:
+  behavior_tests: 54 passed
+  focused_tool_tests: 31 passed
+  unit_tests_total: 92 passed
+  integration_tests: 5 failed (LLM runtime issues, not refactor-related)

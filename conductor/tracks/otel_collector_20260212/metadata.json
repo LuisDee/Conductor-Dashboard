@@ -1,0 +1,8 @@
+{
+  "track_id": "otel_collector_20260212",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-12T14:45:00Z",
+  "updated_at": "2026-02-12T14:45:00Z",
+  "description": "Add a centralised OpenTelemetry Collector service to collect generic service logs from Docker containers, preserve correlation context (trace_id, business IDs), and export to date-partitioned JSON files."
+}

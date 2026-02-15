@@ -1,0 +1,9 @@
+{
+  "id": "pdf_reconciliation_workbench_20260210",
+  "name": "PDF Reconciliation Workbench",
+  "status": "new",
+  "owner": "Gemini",
+  "start_date": "2026-02-10",
+  "description": "Side-by-side reconciliation interface for unmatched PDF ingestion items.",
+  "dependencies": ["pdf_ingestion_refresh_20260210"]
+}

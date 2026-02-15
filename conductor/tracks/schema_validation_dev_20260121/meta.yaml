@@ -1,0 +1,9 @@
+name: Schema Validation Against Dev Database
+status: complete
+priority: medium
+created: 2026-01-21
+completed: 2026-01-24
+branch: DSS-4074
+tags:
+  - database
+  - validation

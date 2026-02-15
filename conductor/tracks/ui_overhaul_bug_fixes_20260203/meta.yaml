@@ -1,0 +1,11 @@
+name: UI Overhaul & Bug Fixes
+status: in_progress
+priority: high
+created: 2026-02-03
+branch: DSS-4074
+tags:
+  - bugfix
+  - frontend
+  - backend
+  - compliance
+  - search

@@ -1,0 +1,13 @@
+id: contract_note_matching_20260129
+title: Contract Note User Matching & Verification
+status: complete
+created: 2026-01-29
+completed: 2026-02-02
+priority: high
+tags:
+  - pdf-extraction
+  - identity-matching
+  - compliance
+  - contract-notes
+depends_on:
+  - gcs_pdf_ingestion_20260129

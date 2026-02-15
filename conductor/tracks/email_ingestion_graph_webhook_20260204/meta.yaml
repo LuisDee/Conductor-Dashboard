@@ -1,0 +1,14 @@
+name: Email Ingestion via Microsoft Graph Webhooks
+status: blocked
+priority: high
+created: 2026-02-04
+updated: 2026-02-05
+branch: DSS-4074
+blocker: "Coder public URL resolves to private IP (10.x.x.x) - Microsoft Graph cannot reach webhook endpoint. Need platform team to expose a truly public endpoint, or deploy to GKE with public Ingress."
+tags:
+  - email
+  - graph-api
+  - webhooks
+  - contract-notes
+  - pdf-ingestion
+implementation_status: "Phases 1-11 code complete, 218 tests passing. Live testing blocked."

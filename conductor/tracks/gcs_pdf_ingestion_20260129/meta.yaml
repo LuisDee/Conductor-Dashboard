@@ -1,0 +1,11 @@
+name: GCS PDF Polling & Ingestion System
+status: complete
+priority: high
+created: 2026-01-29
+branch: DSS-4074
+tags:
+  - gcs
+  - pdf
+  - ingestion
+  - automation
+  - contract-notes

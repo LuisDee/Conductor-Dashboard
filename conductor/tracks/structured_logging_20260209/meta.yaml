@@ -1,0 +1,12 @@
+name: Structured Logging Migration
+status: in_progress
+priority: high
+created: 2026-02-09
+branch: DSS-4074
+tags:
+  - logging
+  - observability
+  - structlog
+  - correlation-id
+  - middleware
+  - otel

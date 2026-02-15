@@ -1,0 +1,20 @@
+id: pdf_ingestion_dashboard_20260205
+title: PDF Ingestion History Dashboard
+description: >
+  Add a new dashboard page showing all PDFs ingested into the system with source tracking,
+  status indicators, extraction results, confidence scores, matched trades, and raw PDF viewing.
+  Provides visibility into the PDF extraction pipeline performance.
+status: complete
+completion_percentage: 100
+priority: medium
+created: 2026-02-05
+updated: 2026-02-06
+tags:
+  - dashboard
+  - pdf-ingestion
+  - monitoring
+  - extraction-pipeline
+dependencies:
+  - gcs_document table
+  - parsed_trade table
+  - existing dashboard infrastructure

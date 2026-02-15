@@ -1,0 +1,8 @@
+{
+  "track_id": "db_migration_20251230",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2025-12-30T14:15:00Z",
+  "updated_at": "2025-12-30T14:15:00Z",
+  "description": "Migration to dev, pre-prod (QA), and prod postgres databases with pa_dealing table migration from Oracle."
+}

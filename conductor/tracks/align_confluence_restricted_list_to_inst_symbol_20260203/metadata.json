@@ -1,0 +1,8 @@
+{
+  "track_id": "align_confluence_restricted_list_to_inst_symbol_20260203",
+  "title": "Align Confluence Restricted List to inst_symbol",
+  "description": "Align the restricted instruments sync workflow with the inst_symbol authoritative identity anchor across Confluence and the codebase.",
+  "status": "pending",
+  "priority": "High",
+  "tags": ["confluence", "integration", "restricted-list", "refactor"]
+}

@@ -1,0 +1,8 @@
+{
+  "track_id": "dashboard_summary_latency_20260204",
+  "type": "bug",
+  "status": "in_progress",
+  "created_at": "2026-02-04T10:15:00Z",
+  "updated_at": "2026-02-04T10:15:00Z",
+  "description": "Fix dashboard summary endpoint latency: unexecuted queries bug, missing expression indexes, sequential execution, and no caching for auth resolution or summary counts"
+}

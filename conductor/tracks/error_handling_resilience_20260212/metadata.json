@@ -1,0 +1,11 @@
+{
+  "id": "error_handling_resilience_20260212",
+  "name": "Error Handling & Resilience Hardening",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Fix asyncio.gather error handling, API client error types, credential leaking in logs, unprotected flush() calls, and silent failure patterns.",
+  "dependencies": [],
+  "tags": ["error-handling", "resilience", "high", "reliability"]
+}

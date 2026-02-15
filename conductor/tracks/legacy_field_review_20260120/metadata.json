@@ -1,0 +1,10 @@
+{
+  "id": "legacy_field_review_20260120",
+  "title": "Legacy PAD Field Review & Integration",
+  "type": "feature",
+  "status": "pending",
+  "created_at": "2026-01-20T18:58:00Z",
+  "description": "Review and properly integrate legacy personal_account_dealing fields into bot workflow, dashboard UI, and compliance processes",
+  "dependencies": ["db_migration_20251230"],
+  "priority": "medium"
+}

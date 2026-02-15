@@ -1,0 +1,49 @@
+id: trade_history_page_20260205
+title: Trade History Dashboard Page
+description: New page showing all executed trades with contract note verification status
+status: planning
+priority: medium
+created: 2025-02-05
+updated: 2025-02-05
+tags:
+  - dashboard
+  - frontend
+  - backend
+  - compliance
+  - trades
+phases:
+  - id: phase1
+    title: Backend API
+    status: pending
+    files:
+      - src/pa_dealing/api/routes/dashboard.py
+      - src/pa_dealing/api/schemas.py
+      - src/pa_dealing/db/repository.py
+  - id: phase2
+    title: Frontend Types & API Client
+    status: pending
+    files:
+      - dashboard/src/types/index.ts
+      - dashboard/src/api/client.ts
+  - id: phase3
+    title: Trade History Page Component
+    status: pending
+    files:
+      - dashboard/src/pages/TradeHistory.tsx
+  - id: phase4
+    title: Navigation & Routing
+    status: pending
+    files:
+      - dashboard/src/components/layout/Sidebar.tsx
+      - dashboard/src/App.tsx
+  - id: phase5
+    title: Contract Note Viewer Integration
+    status: pending
+    files:
+      - dashboard/src/pages/TradeHistory.tsx
+  - id: phase6
+    title: Tests
+    status: pending
+    files:
+      - dashboard/tests/trade_history.spec.ts
+      - tests/unit/test_trade_history_api.py

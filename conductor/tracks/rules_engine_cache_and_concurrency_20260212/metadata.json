@@ -1,0 +1,11 @@
+{
+  "id": "rules_engine_cache_and_concurrency_20260212",
+  "name": "Rules Engine Cache Invalidation & Concurrency Fix",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Invalidate PADRuleRegistry cache on write operations and remove the singleton risk scorer race condition.",
+  "dependencies": ["rules_engine_ui_refactor_20260211"],
+  "tags": ["rules-engine", "cache", "concurrency", "critical"]
+}

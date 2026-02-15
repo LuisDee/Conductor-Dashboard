@@ -1,0 +1,9 @@
+{
+  "id": "minimal_context_test_execution_20260203",
+  "title": "Minimal-Context Test Execution System",
+  "description": "Implement a test runner that redirects output to log files and returns only minimal failure context to prevent agent context bloat.",
+  "status": "completed",
+  "created_at": "2026-02-03",
+  "completed_at": "2026-02-03",
+  "tags": ["testing", "tooling", "token-efficiency"]
+}

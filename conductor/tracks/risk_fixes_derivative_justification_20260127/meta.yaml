@@ -1,0 +1,11 @@
+name: Risk Fixes & Derivative Justification
+status: complete
+priority: high
+created: 2026-01-27
+completed: 2026-01-28
+branch: DSS-4074
+tags:
+  - risk-scoring
+  - derivatives
+  - chatbot
+  - slack

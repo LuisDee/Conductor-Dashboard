@@ -1,0 +1,11 @@
+{
+  "id": "critical_data_integrity_bugs_20260212",
+  "name": "Critical Data Integrity Bug Fixes",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Fix all verified CRITICAL and HIGH logic bugs: PDF corruption, breach resolution, FX rate fallback, risk routing, orphan recovery, range slider validation, audit ActionTypes, and boolean select types.",
+  "dependencies": [],
+  "tags": ["bugs", "data-integrity", "critical", "compliance"]
+}

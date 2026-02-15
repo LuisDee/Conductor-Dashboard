@@ -1,0 +1,239 @@
+# Project Tracks
+
+This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
+
+---
+
+## [x] Track: MAKO Design System Implementation ✅ COMPLETE
+*Link: [./conductor/tracks/mako_colour_palette_20260126/](./conductor/tracks/mako_colour_palette_20260126/)*
+**Priority**: High
+**Tags**: frontend, ui, design-system, branding
+**Status**: Complete (2026-01-29)
+
+Transform the entire PA Dealing Dashboard to use MAKO's official corporate design system including color palette, typography, spacing, and component styling.
+
+**Key Deliverables**:
+- MAKO color palette integration (Navy #0E1E3F, Blue #5471DF, Gold #B28C54)
+- Montserrat font family implementation
+- Mako logo in sidebar with "PA DEALING" and "Compliance Suite" branding
+- Update all 11+ pages (Dashboard, Approvals, Requests, Breaches, etc.)
+- Replace Tailwind generic colors with MAKO design tokens
+- Navy-based shadows (not black)
+- Semantic status colors (Gold for warnings, not red)
+- 220px sidebar, precise spacing/radius values
+
+**Reference**: MAKO_UI_SYSTEM_PROMPT.md
+**Timeline**: 5-6 days
+
+---
+
+## [x] Track: GCS PDF Polling & Ingestion System ✅ COMPLETE
+*Link: [./conductor/tracks/gcs_pdf_ingestion_20260129/](./conductor/tracks/gcs_pdf_ingestion_20260129/)*
+**Priority**: High
+**Tags**: gcs, pdf, ingestion, automation, contract-notes
+**Status**: Complete (2026-01-29)
+
+Production-ready system for automated polling of PDFs from Google Cloud Storage, processing through AI parser, and storing results with full end-to-end traceability.
+
+**Key Deliverables**:
+- ✅ `gcs_document`, `parsed_trade`, `document_processing_log` tables with Alembic migration
+- ✅ GCS client with blob operations (list, move, archive, signed URLs)
+- ✅ PDF poller service with deduplication via `gcs_generation`
+- ✅ Docker Compose integration (`pdf-poller` service)
+- ✅ API endpoints: document list, stats, signed URLs, retry
+- ✅ Health check extended to include GCS connectivity
+- ✅ Unit tests (poller, GCS client) + integration tests (13 tests)
+- ✅ Tested with real contract notes in dev bucket
+
+**Configuration**:
+- Bucket: `cmek-encrypted-bucket-europe-west2-roe18`
+- Prefixes: `contract_notes/{incoming,processing,archive,failed}/`
+- ADC for dev, Workload Identity for prod (no code changes needed)
+
+**Next**: User matching moved to separate track (`contract_note_matching_20260129`)
+
+---
+
+## [x] Track: Contract Note User Matching & Verification ✅ COMPLETE
+*Link: [./conductor/tracks/contract_note_matching_20260129/](./conductor/tracks/contract_note_matching_20260129/)*
+**Priority**: High
+**Tags**: pdf-extraction, identity-matching, compliance, contract-notes, instructor, activity-statements
+**Status**: Complete (2026-02-02)
+**Dependencies**: `gcs_pdf_ingestion_20260129` (COMPLETE)
+
+Match incoming Contract Notes AND Activity Statements to employees with approved PAD requests. Supports Interactive Brokers monthly statements with "Trades" section detection.
+
+**Key Deliverables**:
+- Instructor + LiteLLM integration for self-healing extraction with `max_retries=3`
+- Enhanced ExtractedTradeData schema with rich field descriptions
+- Document type classification (CONTRACT_NOTE vs ACTIVITY_STATEMENT vs OTHER)
+- Two-pass extraction for Activity Statements (section identification → targeted extraction)
+- Fuzzy name matching against candidate pool (approved requests only)
+- Confidence-based routing (HIGH → auto, MEDIUM → audit, LOW → manual review)
+- All identifier extraction (ticker, ISIN, SEDOL, CUSIP, Bloomberg)
+
+**Implementation Phases**:
+- Phase 0: Add instructor, refactor DocumentAgent
+- Phase 1: Enhanced schema with validators
+- Phase 2: Document classification & two-pass extraction
+- Phase 3: Alembic migration for matching fields
+- Phase 4: User matching (email → name → manual)
+- Phase 5: Confidence routing & review triggers
+- Phase 6: Comprehensive tests
+
+---
+
+## [x] Track: Dev Database Migration & Validation ✅ COMPLETE
+*Link: [./conductor/tracks/dev_db_migration_validation_20260120/](./conductor/tracks/dev_db_migration_validation_20260120/)*
+**Status**: Complete (2026-01-24)
+
+---
+
+## [x] Track: Authorization Failure UI Indicator ✅ COMPLETE
+*Link: [./conductor/tracks/auth_failure_ui_20260124/](./conductor/tracks/auth_failure_ui_20260124/)*
+**Status**: Complete (2026-01-24)
+
+---
+
+## [x] Track: Multi-Environment Database Migration ✅ COMPLETE
+*Link: [./conductor/tracks/db_migration_20251230/](./conductor/tracks/db_migration_20251230/)*
+**Status**: Complete (2026-01-24)
+
+---
+
+## [ ] Track: Legacy PAD Field Review & Integration
+*Link: [./conductor/tracks/legacy_field_review_20260120/](./conductor/tracks/legacy_field_review_20260120/)*
+**Dependencies**: Multi-Environment Database Migration
+
+---
+
+## [x] Track: Google Identity Integration ✅ COMPLETE
+*Link: [./conductor/tracks/google_identity_integration_20260119/](./conductor/tracks/google_identity_integration_20260119/)*
+**Status**: Complete (2026-01-25)
+
+---
+
+## [x] Track: Advanced Instrument Validation (3-Tier Lookup) ✅ COMPLETE
+*Link: [./conductor/tracks/advanced_instrument_validation_20260115/](./conductor/tracks/advanced_instrument_validation_20260115/)*
+**Status**: Complete (2026-01-25)
+
+---
+
+## [ ] Track: Firm Trading Conflict Detection & Enrichment
+*Link: [./conductor/tracks/firm_trading_conflict_detection_20260120/](./conductor/tracks/firm_trading_conflict_detection_20260120/)*
+**Dependencies**: Multi-Environment Database Migration, Advanced Instrument Validation
+**Priority**: High - Post-migration enrichment (Phase 2)
+
+---
+
+## [x] Track: Local Database Schema Consolidation ✅ COMPLETE
+*Link: [./conductor/tracks/schema_consolidation_20260121/](./conductor/tracks/schema_consolidation_20260121/)*
+**Status**: Complete (2026-01-21)
+
+---
+
+## [x] Track: Schema Validation Against Dev Database ✅ COMPLETE
+*Link: [./conductor/tracks/schema_validation_dev_20260121/](./conductor/tracks/schema_validation_dev_20260121/)*
+**Status**: Complete (2026-01-24)
+
+---
+
+## [ ] Track: Slack UI Dashboard Links & Cleanup
+*Link: [./conductor/tracks/slack_ui_dashboard_links_20260125/](./conductor/tracks/slack_ui_dashboard_links_20260125/)*
+**Priority**: High
+**Tags**: slack, ui, dashboard, tdd, playwright, auth, identity, notification
+**Status**: In Progress (Phases 5-7 outstanding)
+
+---
+
+## [ ] Track: Chatbot Text Response Handling
+*Link: [./conductor/tracks/chatbot_text_responses_20260125/](./conductor/tracks/chatbot_text_responses_20260125/)*
+**Status**: Spec Complete (2026-01-25)
+
+---
+
+## [x] Track: Instrument Matching Overhaul & Consistency Fix ✅ COMPLETE
+*Link: [./conductor/tracks/instrument_matching_overhaul_20260129/](./conductor/tracks/instrument_matching_overhaul_20260129/)*
+**Priority**: High
+**Tags**: instrument-matching, consistency, scoring, disambiguation, isin-passthrough
+**Status**: Complete (2026-01-29)
+
+## [x] Track: Confluence Integration for Restricted Instruments List ✅ COMPLETE
+*Link: [./conductor/tracks/confluence_restricted_list_20260129/](./conductor/tracks/confluence_restricted_list_20260129/)*
+**Priority**: High
+**Tags**: confluence, integration, restricted-list, compliance, sync
+**Status**: Complete (2026-01-30)
+
+---
+
+## [x] Track: Authoritative Identity & Sequential Guardrail Refactor ✅ COMPLETE
+*Link: [./conductor/tracks/authoritative_identity_refactor_20260130/](./conductor/tracks/authoritative_identity_refactor_20260130/)*
+**Priority**: Critical
+**Tags**: architecture, security, bugfix, backend, tdd
+**Status**: Complete (2026-02-01)
+
+Unify the system's identity resolution and risk assessment logic. Transition from an ambiguous ticker-based model to an inst_symbol anchor (internal) and isin (regulatory) model. Implement a Sequential Pipeline where policy violations discovered by the Advisory System act as a physical circuit breaker for status transitions.
+
+**Key Deliverables**:
+- Alembic migration to add inst_symbol and drop ticker
+- Tiered identity resolution (Bloomberg -> Mappings -> Product)
+- Categorical Risk Scorer implementation (1 High / 2 Medium rules)
+- Orchestrator veto gate for Advisory System violations
+- Comprehensive TDD coverage
+
+---
+
+## [x] Track: Slack Transactional Outbox Standardization ✅ COMPLETE
+*Link: [./conductor/tracks/slack_outbox_standardization_20260201/](./conductor/tracks/slack_outbox_standardization_20260201/)*
+**Priority**: High
+**Tags**: architecture, slack, reliability, outbox, refactoring
+**Status**: Complete (2026-02-01)
+
+Standardize all Slack notifications to use the Transactional Outbox pattern consistently across the codebase. Refactor SlackAgent and MonitoringService to eliminate direct "fire-and-forget" API calls and ensure guaranteed delivery for all compliance alerts.
+
+**Key Deliverables**:
+- ✅ Refactored SlackAgent with AsyncSession support (@requires_session)
+- ✅ Outbox-integrated MonitoringService alerts
+- ✅ Atomic outbox population in SlackSocketHandler
+- ✅ Verified worker health and retry logic
+- ✅ Created slack-outbox architectural skill
+- ✅ Implemented 3-tier Manager Resolution Fallback flow
+- ✅ Schema contract tests for DB-to-Pydantic consistency
+
+---
+
+## [x] Track: Restricted Instruments UI & Sync Controls ✅ COMPLETE
+*Link: [./conductor/tracks/restricted_instruments_ui_20260202/](./conductor/tracks/restricted_instruments_ui_20260202/)*
+**Priority**: Medium
+**Tags**: frontend, ui, restricted-list, confluence, sync
+**Status**: Complete (2026-02-02)
+
+Enhance the dashboard to display the restricted instruments list and provide controls for sync management. Add a restricted instruments table to the Mako Conflicts page, a "Sync Now" button, and configurable sync frequency in Settings.
+
+**Key Deliverables**:
+- ✅ Backend: GET /dashboard/restricted-instruments
+- ✅ Backend: POST /api/config/restricted-list-sync
+- ✅ Backend: PUT /api/config/restricted-list-sync-interval
+- ✅ Backend: Dynamic scheduler reloading
+- ✅ Frontend: SyncStatusCard component
+- ✅ Frontend: RestrictedInstrumentsSection component
+- ✅ Frontend: MakoConflicts integration
+- ✅ Frontend: Settings page sync controls
+- ✅ Integration tests for all new endpoints
+
+---
+
+## [ ] Track: Contract Note Trap Verification
+*Link: [./conductor/tracks/contract_note_trap_verification_20260202/](./conductor/tracks/contract_note_trap_verification_20260202/)*
+**Priority**: High
+**Tags**: pdf-extraction, testing, edge-cases, document-agent, router
+**Status**: Planning
+
+Verify the robustness of the DocumentAgent and ExtractionRouter against 5 known financial document "traps" (Holdings Mirror, Entity Ambiguity, Pence vs Pounds, Date Ambiguity, and Cancelled Trades) using real PDF assets.
+
+**Key Deliverables**:
+- Automated integration tests for the 5 specific PDF edge cases
+- Enhanced `ExtractedTradeData` schema with cancellation flags
+- Refined extraction prompts for currency and date normalization
+- Verified confidence-based routing for ambiguous and cancelled trades
+

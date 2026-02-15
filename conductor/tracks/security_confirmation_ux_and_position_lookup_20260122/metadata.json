@@ -1,0 +1,8 @@
+{
+  "track_id": "security_confirmation_ux_and_position_lookup_20260122",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-22T16:30:00Z",
+  "updated_at": "2026-01-22T16:30:00Z",
+  "description": "Fix UAT issues: database error blocking trade submission, improve symbol extraction, simplify confirmation UX, add position lookup & conflict detection, fix dashboard startup"
+}

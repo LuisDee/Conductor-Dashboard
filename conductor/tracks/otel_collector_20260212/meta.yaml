@@ -1,0 +1,9 @@
+name: Centralised OTel Log Collection System
+status: not_started
+priority: high
+created: 2026-02-12
+tags:
+  - observability
+  - otel
+  - logging
+  - docker

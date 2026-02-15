@@ -1,0 +1,11 @@
+name: Contract Note Ingestion Pipeline
+status: complete
+priority: high
+created: 2026-01-27
+completed: 2026-01-27
+branch: DSS-4074
+tags:
+  - contract-note
+  - upload
+  - compliance
+  - storage

@@ -1,0 +1,8 @@
+{
+  "track_id": "generic_bugfixes_20260127",
+  "type": "bug",
+  "status": "complete",
+  "created_at": "2026-01-27T19:00:00Z",
+  "updated_at": "2026-01-27T22:00:00Z",
+  "description": "Batch of 6 bug fixes: score_pad_request syntax error, expired approval breach, Rights derivative classification, derivative+non-leveraged confirmation, table padding, currency dropdown"
+}

@@ -1,0 +1,10 @@
+name: External Instrument Resolution Layer
+status: not_started
+priority: high
+created: 2026-02-06
+tags:
+  - backend
+  - compliance
+  - instrument-lookup
+  - external-api
+  - tdd

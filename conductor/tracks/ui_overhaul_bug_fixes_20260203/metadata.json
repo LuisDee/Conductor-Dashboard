@@ -1,0 +1,8 @@
+{
+  "id": "ui_overhaul_bug_fixes_20260203",
+  "title": "UI Overhaul & Bug Fixes",
+  "description": "Ongoing collection of UI bugs, search logic issues, and UX improvements discovered during exploratory testing. Spec is appended incrementally as issues are found.",
+  "status": "completed",
+  "created_at": "2026-02-03",
+  "tags": ["bugfix", "frontend", "backend", "compliance", "search"]
+}

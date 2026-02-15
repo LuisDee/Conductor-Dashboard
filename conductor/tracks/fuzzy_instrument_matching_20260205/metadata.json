@@ -1,0 +1,9 @@
+{
+  "track_id": "fuzzy_instrument_matching_20260205",
+  "type": "feature",
+  "status": "complete",
+  "created_at": "2026-02-05T16:00:00Z",
+  "updated_at": "2026-02-05T17:00:00Z",
+  "completed_at": "2026-02-05T17:00:00Z",
+  "description": "Add fuzzy matching fallback to instrument lookup for typo detection and compliance safety"
+}

@@ -1,0 +1,9 @@
+name: LiteLLM Proxy Migration
+status: complete
+priority: high
+created: 2026-01-06
+completed: 2026-01-06
+tags:
+  - litellm
+  - proxy
+  - migration

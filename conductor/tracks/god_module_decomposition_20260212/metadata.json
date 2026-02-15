@@ -1,0 +1,11 @@
+{
+  "id": "god_module_decomposition_20260212",
+  "name": "God Module Decomposition",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Split 5 god modules (>2,300 LOC each) into focused modules <800 LOC. Extract business logic from Slack handlers to service layer.",
+  "dependencies": ["critical_data_integrity_bugs_20260212", "error_handling_resilience_20260212"],
+  "tags": ["refactor", "maintainability", "high", "architecture"]
+}

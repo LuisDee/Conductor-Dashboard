@@ -1,0 +1,10 @@
+name: Google Email Source of Truth
+status: complete
+priority: high
+created: 2026-01-24
+completed: 2026-01-24
+branch: DSS-4074
+tags:
+  - identity
+  - google
+  - email

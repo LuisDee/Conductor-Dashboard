@@ -1,0 +1,10 @@
+name: Confluence Integration for Restricted Instruments List
+status: not_started
+priority: high
+created: 2026-01-29
+branch: DSS-4074
+tags:
+  - confluence
+  - integration
+  - restricted-list
+  - compliance

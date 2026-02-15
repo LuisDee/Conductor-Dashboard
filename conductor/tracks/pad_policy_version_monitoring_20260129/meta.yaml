@@ -1,0 +1,12 @@
+id: pad_policy_version_monitoring_20260129
+title: PAD Policy Version Monitoring
+status: planning
+created: 2026-01-29
+priority: medium
+tags:
+  - confluence
+  - compliance
+  - dashboard
+  - monitoring
+depends_on:
+  - confluence_restricted_list_20260129

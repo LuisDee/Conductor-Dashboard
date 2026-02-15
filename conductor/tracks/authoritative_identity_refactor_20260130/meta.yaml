@@ -1,0 +1,6 @@
+id: authoritative_identity_refactor_20260130
+title: Authoritative Identity & Sequential Guardrail Refactor
+description: Fixes auto-approval bug by standardizing on inst_symbol anchor and implementing advisory-driven veto logic.
+status: in_progress
+created_at: 2026-01-30
+tags: [architecture, security, bugfix, backend]

@@ -1,0 +1,11 @@
+{
+  "id": "rules_engine_ui_refactor_20260211",
+  "name": "Rules Engine UI Refactor",
+  "status": "in_progress",
+  "owner": "Gemini",
+  "start_date": "2026-02-11",
+  "end_date": null,
+  "description": "Refactor Rules Engine UI to simplify risk factors, standardize severity options, and improve audit logging.",
+  "dependencies": ["rules_engine_refactor_20260210"],
+  "tags": ["frontend", "refactor", "rules-engine", "compliance"]
+}

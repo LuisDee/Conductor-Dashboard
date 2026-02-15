@@ -1,0 +1,11 @@
+{
+  "id": "datetime_timezone_standardization_20260212",
+  "name": "Datetime & Timezone Standardization",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Replace all deprecated datetime.utcnow() calls with datetime.now(timezone.utc) and fix timezone-naive datetime.now() in critical paths. Add lint rules to prevent regression.",
+  "dependencies": [],
+  "tags": ["datetime", "timezone", "critical", "compliance", "deprecation"]
+}

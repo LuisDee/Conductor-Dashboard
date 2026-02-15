@@ -1,0 +1,10 @@
+{
+  "id": "rules_engine_refactor_20260210",
+  "name": "Rules Engine Refactor",
+  "status": "done",
+  "owner": "Gemini",
+  "start_date": "2026-02-10",
+  "end_date": "2026-02-10",
+  "description": "Refactor Rules Engine UI/logic to standardize severity, consolidate risk factors, and improve audit trail.",
+  "dependencies": ["dashboard_overhaul_20260206"]
+}

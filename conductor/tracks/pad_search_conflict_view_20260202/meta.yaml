@@ -1,0 +1,11 @@
+name: pad_search_conflict_view_20260202
+status: in_progress
+priority: high
+created: 2026-02-02
+tags:
+  - frontend
+  - backend
+  - compliance
+  - search
+  - conflict-detection
+branch: DSS-4074

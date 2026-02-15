@@ -1,0 +1,10 @@
+name: Dashboard Summary Latency Fix
+status: in_progress
+priority: high
+created: 2026-02-04
+branch: DSS-4074
+tags:
+  - performance
+  - bug-fix
+  - dashboard
+  - caching

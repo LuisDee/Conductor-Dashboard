@@ -1,0 +1,7 @@
+{
+  "track_id": "chatbot_architecture_hardening_20251231",
+  "title": "Chatbot Architecture Hardening",
+  "description": "Refactor Slack Chatbot to use server-side session state and code-driven UI, eliminating hallucinations.",
+  "created_at": "2025-12-31T11:30:00Z",
+  "status": "in_progress"
+}

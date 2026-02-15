@@ -1,0 +1,13 @@
+name: Slack Notification Bugs & Dashboard Count Fix
+status: complete
+priority: high
+created: 2026-01-26
+completed: 2026-01-27
+branch: DSS-4074
+tags:
+  - slack
+  - notifications
+  - bugfix
+  - dashboard
+commits:
+  - f0e55f8

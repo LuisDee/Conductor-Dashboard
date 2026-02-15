@@ -1,0 +1,11 @@
+name: Instrument Matching Overhaul & Consistency Fix
+status: planned
+priority: high
+created: 2026-01-29
+branch: DSS-4074
+tags:
+  - instrument-matching
+  - consistency
+  - scoring
+  - disambiguation
+  - isin-passthrough

@@ -1,0 +1,9 @@
+name: Chatbot Text Response Handling
+status: backlog
+priority: medium
+created: 2026-01-25
+branch: DSS-4074
+tags:
+  - chatbot
+  - ux
+  - slack

@@ -1,0 +1,12 @@
+name: Mock PDF Generator for Parser Testing
+status: complete
+priority: high
+created: 2026-02-05
+completed: 2026-02-05
+branch: DSS-4074
+tags:
+  - testing
+  - pdf-generation
+  - tooling
+  - parser-validation
+  - standalone

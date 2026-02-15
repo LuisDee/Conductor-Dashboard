@@ -1,0 +1,10 @@
+{
+  "id": "pdf_ingestion_refresh_20260210",
+  "name": "PDF Ingestion Refresh & Fixes",
+  "status": "done",
+  "owner": "Gemini",
+  "start_date": "2026-02-10",
+  "end_date": "2026-02-10",
+  "description": "Ad-hoc polling, logging improvements, success rate fix, and classification visibility.",
+  "dependencies": ["dashboard_overhaul_20260206"]
+}

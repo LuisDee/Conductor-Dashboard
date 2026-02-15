@@ -1,0 +1,11 @@
+{
+  "id": "performance_async_optimization_20260212",
+  "name": "Performance & Async Optimization",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Fix per-request HTTP clients, migrate GCS to async, resolve N+1 queries, and add pagination to unbounded queries.",
+  "dependencies": [],
+  "tags": ["performance", "async", "high", "scalability"]
+}

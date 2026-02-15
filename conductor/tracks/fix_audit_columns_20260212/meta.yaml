@@ -1,0 +1,9 @@
+name: Fix Missing Audit Columns (Trace ID)
+status: not_started
+priority: high
+created: 2026-02-12
+tags:
+  - database
+  - bugfix
+  - auditing
+  - alembic

@@ -1,0 +1,8 @@
+{
+  "track_id": "risk_fixes_derivative_justification_20260127",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-01-27T22:00:00Z",
+  "updated_at": "2026-01-27T22:00:00Z",
+  "description": "Fix risk assessment bugs (derivative/leveraged auto-approval, question skipping), add derivative justification field, update scoring thresholds, add holding period risk factor"
+}

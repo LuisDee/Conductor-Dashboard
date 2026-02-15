@@ -1,0 +1,8 @@
+{
+  "track_id": "schema_consolidation_20260121",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-01-21T10:00:00Z",
+  "updated_at": "2026-01-21T10:00:00Z",
+  "description": "Consolidate local databases to match dev/prod dual-schema architecture (padealing + bo_airflow)"
+}

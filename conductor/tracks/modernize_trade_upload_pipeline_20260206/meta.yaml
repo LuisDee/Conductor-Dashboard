@@ -1,0 +1,26 @@
+id: modernize_trade_upload_pipeline_20260206
+title: Modernize Trade Upload Pipeline (GCS Native)
+description: Unify UI and Slack trade confirmation flows to use Google Cloud Storage, ensuring Trade History 'View' icons work consistently.
+status: complete
+completion_percentage: 100
+priority: high
+created: 2026-02-06
+updated: 2026-02-06
+tags:
+  - refactor
+  - slack
+  - gcs
+  - dashboard
+phases:
+  - id: phase1
+    title: Repository & Infrastructure
+    status: completed
+  - id: phase2
+    title: Fix UI Upload Pipe
+    status: completed
+  - id: phase3
+    title: Refactor Slack Handler
+    status: completed
+  - id: phase4
+    title: Verification & Cleanup
+    status: completed

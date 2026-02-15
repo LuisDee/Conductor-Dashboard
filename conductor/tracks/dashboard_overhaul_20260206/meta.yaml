@@ -1,0 +1,16 @@
+id: dashboard_overhaul_20260206
+name: Dashboard UI Overhaul & Role-Based Views
+priority: High
+tags:
+  - frontend
+  - ui
+  - dashboard
+  - role-based-access
+  - activity-feed
+  - trends
+status: in_progress
+branch: feat/dashboard-overhaul
+description: |
+  Major UI/UX overhaul of the PA Dealing Dashboard. Restructures the sidebar based on user roles, 
+  implements an "ALL / MY" data filter for compliance users, replaces Quick Actions with an 
+  Activity Feed, and adds trend indicators to summary cards.

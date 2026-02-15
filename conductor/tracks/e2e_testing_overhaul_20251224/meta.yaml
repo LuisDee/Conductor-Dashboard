@@ -1,0 +1,7 @@
+name: E2E Testing Overhaul
+status: complete
+priority: medium
+created: 2025-12-24
+completed: 2025-12-24
+tags:
+  - implementation

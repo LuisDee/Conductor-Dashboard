@@ -1,0 +1,11 @@
+{
+  "id": "import_path_standardization_20260212",
+  "name": "Import Path Standardization",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Standardize all imports from src.pa_dealing to pa_dealing, remove src/__init__.py, and add lint guard to prevent regression.",
+  "dependencies": [],
+  "tags": ["imports", "code-quality", "critical", "reliability"]
+}

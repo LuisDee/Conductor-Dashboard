@@ -1,0 +1,11 @@
+{
+  "id": "security_auth_hardening_20260212",
+  "name": "Security & Authentication Hardening",
+  "status": "not_started",
+  "owner": null,
+  "start_date": null,
+  "end_date": null,
+  "description": "Address all CRITICAL security findings: dev auth bypass, CORS wildcard, IAP JWT verification, terminated employee access, and hardcoded credentials.",
+  "dependencies": [],
+  "tags": ["security", "authentication", "critical", "production-blocker"]
+}

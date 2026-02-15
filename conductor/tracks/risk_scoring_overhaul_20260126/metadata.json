@@ -1,0 +1,8 @@
+{
+  "track_id": "risk_scoring_overhaul_20260126",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-26T12:30:00Z",
+  "updated_at": "2026-01-26T12:30:00Z",
+  "description": "Risk Scoring Overhaul & Oracle Position Enrichment - Simplify scoring to 6 factors, add advisory warnings, Oracle DB integration for Mako position data"
+}

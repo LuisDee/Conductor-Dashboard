@@ -1,0 +1,13 @@
+name: Operations Dashboard Redesign
+status: in_progress
+priority: high
+created: 2026-02-09
+branch: DSS-4074
+tags:
+  - frontend
+  - backend
+  - dashboard
+  - audit-events
+  - role-based-access
+  - sparklines
+  - compliance
