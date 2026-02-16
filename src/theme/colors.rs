@@ -188,10 +188,7 @@ impl Theme {
     /// Cycle to the next theme in the preset list.
     pub fn next(&self) -> Theme {
         let themes = Self::all();
-        let current_idx = themes
-            .iter()
-            .position(|t| t.name == self.name)
-            .unwrap_or(0);
+        let current_idx = themes.iter().position(|t| t.name == self.name).unwrap_or(0);
         let next_idx = (current_idx + 1) % themes.len();
         themes[next_idx]
     }

@@ -8,8 +8,8 @@ use std::io::stdout;
 use std::path::PathBuf;
 
 use clap::Parser;
-use crossterm::execute;
 use crossterm::event::{DisableMouseCapture, EnableMouseCapture};
+use crossterm::execute;
 use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
 
 use crate::model::FilterMode;

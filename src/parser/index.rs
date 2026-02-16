@@ -87,7 +87,10 @@ pub fn parse_index_content(content: &str) -> Vec<IndexEntry> {
     for event in parser {
         match event {
             // Start of an H2 heading
-            Event::Start(Tag::Heading { level: HeadingLevel::H2, .. }) => {
+            Event::Start(Tag::Heading {
+                level: HeadingLevel::H2,
+                ..
+            }) => {
                 // Flush previous entry
                 if let Some(entry) = current_entry.take() {
                     entries.push(entry);
@@ -268,7 +271,16 @@ fn apply_field(entry: &mut IndexEntry, key: &str, value: &str) {
         "Dependencies" | "Depends on" => {
             entry.dependencies = value
                 .split(',')
-                .map(|d| d.trim().trim_matches('`').trim_matches('(').split(')').next().unwrap_or("").trim().to_string())
+                .map(|d| {
+                    d.trim()
+                        .trim_matches('`')
+                        .trim_matches('(')
+                        .split(')')
+                        .next()
+                        .unwrap_or("")
+                        .trim()
+                        .to_string()
+                })
                 .filter(|d| !d.is_empty())
                 .collect();
         }
@@ -303,9 +315,15 @@ mod tests {
 
     #[test]
     fn test_parse_h2_dash_progress() {
-        let entry = parse_h2_heading("[-] Track: Security & Authentication Hardening - IN PROGRESS (3/5 findings)").unwrap();
+        let entry = parse_h2_heading(
+            "[-] Track: Security & Authentication Hardening - IN PROGRESS (3/5 findings)",
+        )
+        .unwrap();
         assert_eq!(entry.checkbox, CheckboxStatus::InProgress);
-        assert_eq!(entry.title, "Security & Authentication Hardening - IN PROGRESS (3/5 findings)");
+        assert_eq!(
+            entry.title,
+            "Security & Authentication Hardening - IN PROGRESS (3/5 findings)"
+        );
     }
 
     #[test]

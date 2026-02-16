@@ -119,9 +119,9 @@ impl<'de> Deserialize<'de> for Priority {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum CheckboxStatus {
     #[default]
-    Unchecked,   // [ ]
-    InProgress,  // [~] or [-]
-    Checked,     // [x]
+    Unchecked, // [ ]
+    InProgress, // [~] or [-]
+    Checked,    // [x]
 }
 
 impl CheckboxStatus {

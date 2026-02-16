@@ -191,17 +191,32 @@ fn test_merge_plan_updates_task_counts() {
             name: "Phase 1".to_string(),
             status: PhaseStatus::Complete,
             tasks: vec![
-                PlanTask { text: "A".to_string(), done: true },
-                PlanTask { text: "B".to_string(), done: true },
+                PlanTask {
+                    text: "A".to_string(),
+                    done: true,
+                },
+                PlanTask {
+                    text: "B".to_string(),
+                    done: true,
+                },
             ],
         },
         PlanPhase {
             name: "Phase 2".to_string(),
             status: PhaseStatus::Active,
             tasks: vec![
-                PlanTask { text: "C".to_string(), done: true },
-                PlanTask { text: "D".to_string(), done: false },
-                PlanTask { text: "E".to_string(), done: false },
+                PlanTask {
+                    text: "C".to_string(),
+                    done: true,
+                },
+                PlanTask {
+                    text: "D".to_string(),
+                    done: false,
+                },
+                PlanTask {
+                    text: "E".to_string(),
+                    done: false,
+                },
             ],
         },
     ];
@@ -234,10 +249,22 @@ fn test_plan_phase_progress_partial() {
         name: "Partial".to_string(),
         status: PhaseStatus::Active,
         tasks: vec![
-            PlanTask { text: "A".to_string(), done: true },
-            PlanTask { text: "B".to_string(), done: false },
-            PlanTask { text: "C".to_string(), done: false },
-            PlanTask { text: "D".to_string(), done: false },
+            PlanTask {
+                text: "A".to_string(),
+                done: true,
+            },
+            PlanTask {
+                text: "B".to_string(),
+                done: false,
+            },
+            PlanTask {
+                text: "C".to_string(),
+                done: false,
+            },
+            PlanTask {
+                text: "D".to_string(),
+                done: false,
+            },
         ],
     };
     assert!((phase.progress_percent() - 25.0).abs() < f32::EPSILON);

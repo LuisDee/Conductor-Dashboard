@@ -67,9 +67,7 @@ impl TrackCache {
 
     /// Check if a path has changed since last cached mtime.
     pub fn has_changed(&self, path: &Path) -> bool {
-        let current = std::fs::metadata(path)
-            .ok()
-            .and_then(|m| m.modified().ok());
+        let current = std::fs::metadata(path).ok().and_then(|m| m.modified().ok());
 
         match (self.mtimes.get(path), current) {
             (Some(cached), Some(current)) => current > *cached,

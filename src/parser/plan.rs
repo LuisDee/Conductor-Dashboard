@@ -186,7 +186,10 @@ fn compute_phase_statuses(phases: &mut [PlanPhase]) {
     // If we never found an active phase and there are incomplete phases,
     // mark the first incomplete one as active.
     if !found_active {
-        if let Some(phase) = phases.iter_mut().find(|p| p.status == PhaseStatus::Pending && !p.tasks.is_empty()) {
+        if let Some(phase) = phases
+            .iter_mut()
+            .find(|p| p.status == PhaseStatus::Pending && !p.tasks.is_empty())
+        {
             phase.status = PhaseStatus::Active;
         }
     }
@@ -243,7 +246,10 @@ mod tests {
 
     #[test]
     fn test_task_text_cleanup() {
-        assert_eq!(clean_task_text("Task: Build the parser"), "Build the parser");
+        assert_eq!(
+            clean_task_text("Task: Build the parser"),
+            "Build the parser"
+        );
         assert_eq!(clean_task_text("  Build the parser  "), "Build the parser");
         assert_eq!(clean_task_text("Task:  Do stuff"), "Do stuff");
     }

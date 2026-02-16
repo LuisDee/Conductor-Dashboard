@@ -6,10 +6,7 @@ pub enum ParseError {
     IndexNotFound(PathBuf),
 
     #[error("Invalid metadata for track {track_id}: {message}")]
-    MetadataInvalid {
-        track_id: String,
-        message: String,
-    },
+    MetadataInvalid { track_id: String, message: String },
 
     #[error("Failed to read {path}: {source}")]
     Io {

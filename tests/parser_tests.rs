@@ -76,10 +76,7 @@ fn test_status_field_overrides_checkbox() {
 fn test_all_tracks_have_ids() {
     let tracks = parser::index::parse_index(&conductor_dir()).unwrap();
     for (id, _track) in &tracks {
-        assert!(
-            !id.as_str().is_empty(),
-            "track should have non-empty ID"
-        );
+        assert!(!id.as_str().is_empty(), "track should have non-empty ID");
     }
 }
 
@@ -106,9 +103,10 @@ fn test_json_schema_a_metadata() {
     let track_dir = conductor_dir()
         .join("tracks")
         .join("critical_data_integrity_bugs_20260212");
-    let meta = parser::metadata::parse_metadata(&track_dir, "critical_data_integrity_bugs_20260212")
-        .unwrap()
-        .expect("metadata.json should exist");
+    let meta =
+        parser::metadata::parse_metadata(&track_dir, "critical_data_integrity_bugs_20260212")
+            .unwrap()
+            .expect("metadata.json should exist");
 
     assert_eq!(meta.status, Status::New); // "not_started" → New
     assert!(!meta.tags.is_empty());
@@ -195,10 +193,7 @@ fn test_critical_bugs_plan_has_phases() {
         .join("plan.md");
     let phases = parser::plan::parse_plan(&plan_path).unwrap();
 
-    assert!(
-        !phases.is_empty(),
-        "critical bugs plan should have phases"
-    );
+    assert!(!phases.is_empty(), "critical bugs plan should have phases");
 }
 
 #[test]
@@ -252,10 +247,7 @@ fn test_metadata_overrides_index_status() {
 fn test_tracks_with_plans_have_task_counts() {
     let tracks = parser::load_all_tracks(&conductor_dir()).unwrap();
 
-    let tracks_with_tasks: Vec<_> = tracks
-        .values()
-        .filter(|t| t.tasks_total > 0)
-        .collect();
+    let tracks_with_tasks: Vec<_> = tracks.values().filter(|t| t.tasks_total > 0).collect();
 
     assert!(
         tracks_with_tasks.len() >= 30,
@@ -269,7 +261,11 @@ fn test_no_panics_on_full_load() {
     // This test primarily verifies no panic happens during full parsing.
     // If this test passes, all real-world format variations are handled.
     let result = parser::load_all_tracks(&conductor_dir());
-    assert!(result.is_ok(), "full load should not error: {:?}", result.err());
+    assert!(
+        result.is_ok(),
+        "full load should not error: {:?}",
+        result.err()
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -85,7 +85,10 @@ struct RawYamlMetadata {
 
 /// Try to load metadata for a track. Tries metadata.json first, then meta.yaml.
 /// Returns Ok(None) if neither file exists.
-pub fn parse_metadata(track_dir: &Path, track_id: &str) -> Result<Option<TrackMetadata>, ParseError> {
+pub fn parse_metadata(
+    track_dir: &Path,
+    track_id: &str,
+) -> Result<Option<TrackMetadata>, ParseError> {
     let json_path = track_dir.join("metadata.json");
     let yaml_path = track_dir.join("meta.yaml");
 
@@ -110,12 +113,11 @@ pub fn parse_metadata(track_dir: &Path, track_id: &str) -> Result<Option<TrackMe
 
 /// Parse JSON metadata content.
 pub fn parse_json_metadata(content: &str, track_id: &str) -> Result<TrackMetadata, ParseError> {
-    let raw: RawJsonMetadata = serde_json::from_str(content).map_err(|e| {
-        ParseError::MetadataInvalid {
+    let raw: RawJsonMetadata =
+        serde_json::from_str(content).map_err(|e| ParseError::MetadataInvalid {
             track_id: track_id.to_string(),
             message: e.to_string(),
-        }
-    })?;
+        })?;
 
     let created_at = raw
         .created_at
@@ -144,12 +146,11 @@ pub fn parse_json_metadata(content: &str, track_id: &str) -> Result<TrackMetadat
 
 /// Parse YAML metadata content.
 pub fn parse_yaml_metadata(content: &str, track_id: &str) -> Result<TrackMetadata, ParseError> {
-    let raw: RawYamlMetadata = serde_yaml::from_str(content).map_err(|e| {
-        ParseError::MetadataInvalid {
+    let raw: RawYamlMetadata =
+        serde_yaml::from_str(content).map_err(|e| ParseError::MetadataInvalid {
             track_id: track_id.to_string(),
             message: e.to_string(),
-        }
-    })?;
+        })?;
 
     let created_at = raw.created.as_deref().and_then(parse_datetime);
     let updated_at = raw.completed.as_deref().and_then(parse_datetime);

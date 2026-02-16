@@ -15,7 +15,9 @@ use ratatui::widgets::{
 use ratatui::Frame;
 
 use crate::event::Event;
-use crate::model::{FilterMode, PhaseStatus, ReloadScope, SortMode, Status, Track, TrackCache, TrackId};
+use crate::model::{
+    FilterMode, PhaseStatus, ReloadScope, SortMode, Status, Track, TrackCache, TrackId,
+};
 use crate::theme::Theme;
 
 /// Return value from event handling.
@@ -74,7 +76,11 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(conductor_dir: PathBuf, no_watch: bool, initial_filter: FilterMode) -> color_eyre::Result<Self> {
+    pub fn new(
+        conductor_dir: PathBuf,
+        no_watch: bool,
+        initial_filter: FilterMode,
+    ) -> color_eyre::Result<Self> {
         Ok(Self {
             tracks: BTreeMap::new(),
             conductor_dir,
@@ -162,10 +168,7 @@ impl App {
     }
 
     /// Main event loop.
-    pub async fn run(
-        &mut self,
-        terminal: &mut ratatui::DefaultTerminal,
-    ) -> color_eyre::Result<()> {
+    pub async fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
         // Initial load
         self.load_tracks()?;
 
@@ -328,7 +331,9 @@ impl App {
         match mouse.kind {
             MouseEventKind::Down(crossterm::event::MouseButton::Left) => {
                 // Click in track list area → select that track
-                if !self.detail_maximised && self.list_area.contains((mouse.column, mouse.row).into()) {
+                if !self.detail_maximised
+                    && self.list_area.contains((mouse.column, mouse.row).into())
+                {
                     // Account for border (1) + header row (1) + header bottom margin (1) = 3 rows offset
                     let row_offset = mouse.row.saturating_sub(self.list_area.y + 3);
                     let track_index = (row_offset / 2) as usize; // each row is height 2
@@ -471,11 +476,12 @@ impl App {
                 self.table_state.select(Some(pos));
             } else {
                 // Selection filtered out — select first
-                self.table_state.select(if self.filtered_track_ids.is_empty() {
-                    None
-                } else {
-                    Some(0)
-                });
+                self.table_state
+                    .select(if self.filtered_track_ids.is_empty() {
+                        None
+                    } else {
+                        Some(0)
+                    });
                 self.selected_track = self.filtered_track_ids.first().cloned();
             }
         }
@@ -500,18 +506,18 @@ impl App {
         let has_error = self.error_message.is_some();
         let constraints = if has_error {
             vec![
-                Constraint::Length(1),  // title bar
-                Constraint::Length(2),  // stats bar
-                Constraint::Length(1),  // error bar
+                Constraint::Length(1), // title bar
+                Constraint::Length(2), // stats bar
+                Constraint::Length(1), // error bar
                 Constraint::Fill(1),   // main content
-                Constraint::Length(1),  // status bar
+                Constraint::Length(1), // status bar
             ]
         } else {
             vec![
-                Constraint::Length(1),  // title bar
-                Constraint::Length(2),  // stats bar
+                Constraint::Length(1), // title bar
+                Constraint::Length(2), // stats bar
                 Constraint::Fill(1),   // main content
-                Constraint::Length(1),  // status bar
+                Constraint::Length(1), // status bar
             ]
         };
 
@@ -576,9 +582,7 @@ impl App {
             Span::styled("● WATCHER ERROR", Style::default().fg(self.theme.error))
         };
 
-        let padding = area
-            .width
-            .saturating_sub(24 + self.clock.len() as u16 + 12) as usize;
+        let padding = area.width.saturating_sub(24 + self.clock.len() as u16 + 12) as usize;
 
         let title = Line::from(vec![
             Span::styled(
@@ -673,14 +677,12 @@ impl App {
 
     fn render_error_bar(&self, frame: &mut Frame, area: Rect) {
         if let Some((ref msg, _)) = self.error_message {
-            let line = Line::from(vec![
-                Span::styled(
-                    format!(" ⚠ {msg}"),
-                    Style::default()
-                        .fg(self.theme.bar_bg)
-                        .bg(self.theme.warning),
-                ),
-            ]);
+            let line = Line::from(vec![Span::styled(
+                format!(" ⚠ {msg}"),
+                Style::default()
+                    .fg(self.theme.bar_bg)
+                    .bg(self.theme.warning),
+            )]);
             frame.render_widget(
                 Paragraph::new(line).style(Style::default().bg(self.theme.warning)),
                 area,
@@ -760,7 +762,11 @@ impl App {
                 Row::new(vec![
                     Cell::from(Text::from(vec![title, subtitle])),
                     Cell::from(status_span(&track.status, &theme)),
-                    Cell::from(progress_bar_text(track.progress_percent(), &track.status, &theme)),
+                    Cell::from(progress_bar_text(
+                        track.progress_percent(),
+                        &track.status,
+                        &theme,
+                    )),
                     Cell::from(format!("{}/{}", track.tasks_completed, track.tasks_total)),
                 ])
                 .height(2)
@@ -824,10 +830,7 @@ impl App {
                     .add_modifier(Modifier::DIM),
             ),
             Span::raw(" · "),
-            Span::styled(
-                track.id.as_str(),
-                Style::default().fg(theme.text_secondary),
-            ),
+            Span::styled(track.id.as_str(), Style::default().fg(theme.text_secondary)),
         ]));
 
         // Title
@@ -892,20 +895,14 @@ impl App {
         // Implementation Plan heading
         if !track.plan_phases.is_empty() {
             lines.push(Line::from(vec![
-                Span::styled(
-                    "━━ ",
-                    Style::default().fg(theme.accent),
-                ),
+                Span::styled("━━ ", Style::default().fg(theme.accent)),
                 Span::styled(
                     "IMPLEMENTATION PLAN",
                     Style::default()
                         .fg(theme.accent)
                         .add_modifier(Modifier::BOLD),
                 ),
-                Span::styled(
-                    " ━━",
-                    Style::default().fg(theme.accent),
-                ),
+                Span::styled(" ━━", Style::default().fg(theme.accent)),
             ]));
             lines.push(Line::raw(""));
 
@@ -952,10 +949,7 @@ impl App {
                     if task.done {
                         lines.push(Line::from(vec![
                             Span::styled("  ✓ ", Style::default().fg(theme.success)),
-                            Span::styled(
-                                &task.text,
-                                Style::default().fg(theme.text_secondary),
-                            ),
+                            Span::styled(&task.text, Style::default().fg(theme.text_secondary)),
                         ]));
                     } else {
                         lines.push(Line::from(vec![
@@ -983,8 +977,8 @@ impl App {
         // Scrollbar
         if total_lines > inner.height {
             let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight);
-            let mut scrollbar_state = ScrollbarState::new(total_lines as usize)
-                .position(self.detail_scroll as usize);
+            let mut scrollbar_state =
+                ScrollbarState::new(total_lines as usize).position(self.detail_scroll as usize);
             frame.render_stateful_widget(
                 scrollbar,
                 inner.inner(Margin {
@@ -1105,7 +1099,12 @@ fn progress_bar_text(percent: f32, status: &Status, theme: &Theme) -> Text<'stat
         _ => theme.progress_new,
     };
 
-    let bar = format!("{}{} {:>3.0}%", "█".repeat(filled), "░".repeat(empty), percent);
+    let bar = format!(
+        "{}{} {:>3.0}%",
+        "█".repeat(filled),
+        "░".repeat(empty),
+        percent
+    );
     Text::from(Span::styled(bar, Style::default().fg(color)))
 }
 
