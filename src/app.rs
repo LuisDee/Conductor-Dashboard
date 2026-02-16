@@ -16,7 +16,7 @@ use ratatui::Frame;
 
 use crate::event::Event;
 use crate::model::{FilterMode, PhaseStatus, ReloadScope, SortMode, Status, Track, TrackCache, TrackId};
-use crate::theme::MakoColors;
+use crate::theme::Theme;
 
 /// Return value from event handling.
 #[derive(Debug, PartialEq)]
@@ -52,6 +52,9 @@ pub struct App {
     pub split_percent: u16,
     pub detail_maximised: bool,
 
+    // Theme
+    pub theme: Theme,
+
     // Status
     pub watcher_active: bool,
     pub no_watch: bool,
@@ -85,6 +88,7 @@ impl App {
             detail_total_lines: 0,
             split_percent: 45,
             detail_maximised: false,
+            theme: Theme::mako(),
             watcher_active: !no_watch,
             no_watch,
             last_refresh: None,
@@ -295,6 +299,9 @@ impl App {
             KeyCode::Char('r') => {
                 return Action::ForceRefresh;
             }
+            KeyCode::Char('t') => {
+                self.theme = self.theme.next();
+            }
             KeyCode::Char('[') => {
                 self.split_percent = self.split_percent.saturating_sub(5).max(20);
             }
@@ -485,7 +492,7 @@ impl App {
         if area.width < 40 || area.height < 10 {
             let msg = Paragraph::new("Terminal too small. Resize to at least 80x24.")
                 .alignment(Alignment::Center)
-                .style(Style::default().fg(MakoColors::ERROR));
+                .style(Style::default().fg(self.theme.error));
             frame.render_widget(msg, area);
             return;
         }
@@ -562,11 +569,11 @@ impl App {
 
     fn render_title_bar(&self, frame: &mut Frame, area: Rect) {
         let watcher_indicator = if self.no_watch {
-            Span::styled("○ STATIC", Style::default().fg(MakoColors::TEXT_SECONDARY))
+            Span::styled("○ STATIC", Style::default().fg(self.theme.text_secondary))
         } else if self.watcher_active {
-            Span::styled("● WATCHING", Style::default().fg(MakoColors::SUCCESS))
+            Span::styled("● WATCHING", Style::default().fg(self.theme.success))
         } else {
-            Span::styled("● WATCHER ERROR", Style::default().fg(MakoColors::ERROR))
+            Span::styled("● WATCHER ERROR", Style::default().fg(self.theme.error))
         };
 
         let padding = area
@@ -588,8 +595,8 @@ impl App {
         frame.render_widget(
             Paragraph::new(title).style(
                 Style::default()
-                    .bg(MakoColors::NAVY)
-                    .fg(MakoColors::TEXT_ON_NAVY),
+                    .bg(self.theme.bar_bg)
+                    .fg(self.theme.text_on_bar),
             ),
             area,
         );
@@ -624,17 +631,17 @@ impl App {
             Span::raw(" │ "),
             Span::styled(
                 format!("{} Active", active),
-                Style::default().fg(MakoColors::BLUE),
+                Style::default().fg(self.theme.accent),
             ),
             Span::raw(" │ "),
             Span::styled(
                 format!("{} Blocked", blocked),
-                Style::default().fg(MakoColors::GOLD),
+                Style::default().fg(self.theme.warning),
             ),
             Span::raw(" │ "),
             Span::styled(
                 format!("{} Complete", complete),
-                Style::default().fg(MakoColors::SUCCESS),
+                Style::default().fg(self.theme.success),
             ),
         ]);
         frame.render_widget(Paragraph::new(counts), counts_area);
@@ -653,12 +660,12 @@ impl App {
         let controls = Line::from(vec![
             Span::styled(
                 format!(" Filter: {filter_label}"),
-                Style::default().fg(MakoColors::TEXT_SECONDARY),
+                Style::default().fg(self.theme.text_secondary),
             ),
             Span::raw("  │  "),
             Span::styled(
                 format!("Sort: {sort_label}"),
-                Style::default().fg(MakoColors::TEXT_SECONDARY),
+                Style::default().fg(self.theme.text_secondary),
             ),
         ]);
         frame.render_widget(Paragraph::new(controls), controls_area);
@@ -670,18 +677,20 @@ impl App {
                 Span::styled(
                     format!(" ⚠ {msg}"),
                     Style::default()
-                        .fg(MakoColors::NAVY)
-                        .bg(MakoColors::GOLD),
+                        .fg(self.theme.bar_bg)
+                        .bg(self.theme.warning),
                 ),
             ]);
             frame.render_widget(
-                Paragraph::new(line).style(Style::default().bg(MakoColors::GOLD)),
+                Paragraph::new(line).style(Style::default().bg(self.theme.warning)),
                 area,
             );
         }
     }
 
     fn render_status_bar(&self, frame: &mut Frame, area: Rect) {
+        let theme_name = self.theme.name;
+
         let shortcuts = Line::from(vec![
             Span::styled(" ↑↓", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Navigate  "),
@@ -693,27 +702,31 @@ impl App {
             Span::raw(" Sort  "),
             Span::styled("/", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Search  "),
+            Span::styled("t", Style::default().add_modifier(Modifier::BOLD)),
+            Span::raw(" Theme  "),
             Span::styled("?", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Help  "),
             Span::styled("q", Style::default().add_modifier(Modifier::BOLD)),
-            Span::raw(" Quit"),
+            Span::raw(format!(" Quit  │ {theme_name}")),
         ]);
 
         frame.render_widget(
             Paragraph::new(shortcuts).style(
                 Style::default()
-                    .bg(MakoColors::NAVY)
-                    .fg(MakoColors::TEXT_ON_NAVY),
+                    .bg(self.theme.bar_bg)
+                    .fg(self.theme.text_on_bar),
             ),
             area,
         );
     }
 
     fn render_track_list(&mut self, frame: &mut Frame, area: Rect) {
+        let theme = self.theme;
+
         let header = Row::new(vec!["Track", "Status", "Progress", "Tasks"])
             .style(
                 Style::default()
-                    .fg(MakoColors::TEXT_SECONDARY)
+                    .fg(theme.text_secondary)
                     .add_modifier(Modifier::BOLD),
             )
             .bottom_margin(1);
@@ -741,13 +754,13 @@ impl App {
                         },
                         date_str
                     ),
-                    Style::default().fg(MakoColors::TEXT_SECONDARY),
+                    Style::default().fg(theme.text_secondary),
                 )]);
 
                 Row::new(vec![
                     Cell::from(Text::from(vec![title, subtitle])),
-                    Cell::from(status_span(&track.status)),
-                    Cell::from(progress_bar_text(track.progress_percent(), &track.status)),
+                    Cell::from(status_span(&track.status, &theme)),
+                    Cell::from(progress_bar_text(track.progress_percent(), &track.status, &theme)),
                     Cell::from(format!("{}/{}", track.tasks_completed, track.tasks_total)),
                 ])
                 .height(2)
@@ -765,12 +778,12 @@ impl App {
             .header(header)
             .block(
                 Block::bordered()
-                    .border_style(Style::default().fg(MakoColors::BORDER))
+                    .border_style(Style::default().fg(theme.border))
                     .title(" Tracks "),
             )
             .row_highlight_style(
                 Style::default()
-                    .bg(MakoColors::BLUE)
+                    .bg(theme.accent)
                     .fg(Color::White)
                     .add_modifier(Modifier::BOLD),
             )
@@ -780,8 +793,10 @@ impl App {
     }
 
     fn render_detail_panel(&mut self, frame: &mut Frame, area: Rect) {
+        let theme = self.theme;
+
         let block = Block::bordered()
-            .border_style(Style::default().fg(MakoColors::BORDER))
+            .border_style(Style::default().fg(theme.border))
             .title(" Detail ");
         let inner = block.inner(area);
         frame.render_widget(block, area);
@@ -789,7 +804,7 @@ impl App {
         let Some(track_id) = &self.selected_track else {
             let msg = Paragraph::new("Select a track to view details")
                 .alignment(Alignment::Center)
-                .style(Style::default().fg(MakoColors::TEXT_SECONDARY));
+                .style(Style::default().fg(theme.text_secondary));
             frame.render_widget(msg, inner);
             return;
         };
@@ -805,13 +820,13 @@ impl App {
             Span::styled(
                 track.track_type.label(),
                 Style::default()
-                    .fg(MakoColors::TEXT_SECONDARY)
+                    .fg(theme.text_secondary)
                     .add_modifier(Modifier::DIM),
             ),
             Span::raw(" · "),
             Span::styled(
                 track.id.as_str(),
-                Style::default().fg(MakoColors::TEXT_SECONDARY),
+                Style::default().fg(theme.text_secondary),
             ),
         ]));
 
@@ -846,11 +861,11 @@ impl App {
         let filled = ((pct / 100.0) * bar_width as f32).round() as usize;
         let empty = bar_width.saturating_sub(filled);
         let bar_color = if pct >= 100.0 {
-            MakoColors::SUCCESS
+            theme.progress_done
         } else if pct > 0.0 {
-            MakoColors::BLUE
+            theme.progress_active
         } else {
-            MakoColors::TEXT_SECONDARY
+            theme.progress_new
         };
         lines.push(Line::from(vec![
             Span::styled(
@@ -858,7 +873,7 @@ impl App {
                 Style::default().add_modifier(Modifier::BOLD),
             ),
             Span::styled("█".repeat(filled), Style::default().fg(bar_color)),
-            Span::styled("░".repeat(empty), Style::default().fg(MakoColors::BORDER)),
+            Span::styled("░".repeat(empty), Style::default().fg(theme.border)),
             Span::raw(format!(" {:.0}%", pct)),
         ]));
 
@@ -869,7 +884,7 @@ impl App {
             let dep_str: Vec<&str> = track.dependencies.iter().map(|d| d.as_str()).collect();
             lines.push(Line::styled(
                 format!("⚠ Blocked by: {}", dep_str.join(", ")),
-                Style::default().fg(MakoColors::GOLD),
+                Style::default().fg(theme.warning),
             ));
             lines.push(Line::raw(""));
         }
@@ -879,17 +894,17 @@ impl App {
             lines.push(Line::from(vec![
                 Span::styled(
                     "━━ ",
-                    Style::default().fg(MakoColors::BLUE),
+                    Style::default().fg(theme.accent),
                 ),
                 Span::styled(
                     "IMPLEMENTATION PLAN",
                     Style::default()
-                        .fg(MakoColors::BLUE)
+                        .fg(theme.accent)
                         .add_modifier(Modifier::BOLD),
                 ),
                 Span::styled(
                     " ━━",
-                    Style::default().fg(MakoColors::BLUE),
+                    Style::default().fg(theme.accent),
                 ),
             ]));
             lines.push(Line::raw(""));
@@ -902,10 +917,10 @@ impl App {
                     PhaseStatus::Blocked => "⊘",
                 };
                 let icon_color = match phase.status {
-                    PhaseStatus::Complete => MakoColors::SUCCESS,
-                    PhaseStatus::Active => MakoColors::BLUE,
-                    PhaseStatus::Pending => MakoColors::TEXT_SECONDARY,
-                    PhaseStatus::Blocked => MakoColors::GOLD,
+                    PhaseStatus::Complete => theme.success,
+                    PhaseStatus::Active => theme.accent,
+                    PhaseStatus::Pending => theme.text_secondary,
+                    PhaseStatus::Blocked => theme.warning,
                 };
                 let done = phase.tasks.iter().filter(|t| t.done).count();
                 let total = phase.tasks.len();
@@ -913,18 +928,18 @@ impl App {
                 // Phase header with background highlight for active phases
                 let phase_name_style = match phase.status {
                     PhaseStatus::Active => Style::default()
-                        .fg(MakoColors::BLUE)
+                        .fg(theme.accent)
                         .add_modifier(Modifier::BOLD),
                     PhaseStatus::Complete => Style::default()
-                        .fg(MakoColors::SUCCESS)
+                        .fg(theme.success)
                         .add_modifier(Modifier::BOLD),
                     _ => Style::default().add_modifier(Modifier::BOLD),
                 };
 
                 let count_style = match phase.status {
-                    PhaseStatus::Complete => Style::default().fg(MakoColors::SUCCESS),
-                    PhaseStatus::Active => Style::default().fg(MakoColors::BLUE),
-                    _ => Style::default().fg(MakoColors::TEXT_SECONDARY),
+                    PhaseStatus::Complete => Style::default().fg(theme.success),
+                    PhaseStatus::Active => Style::default().fg(theme.accent),
+                    _ => Style::default().fg(theme.text_secondary),
                 };
 
                 lines.push(Line::from(vec![
@@ -936,15 +951,15 @@ impl App {
                 for task in &phase.tasks {
                     if task.done {
                         lines.push(Line::from(vec![
-                            Span::styled("  ✓ ", Style::default().fg(MakoColors::SUCCESS)),
+                            Span::styled("  ✓ ", Style::default().fg(theme.success)),
                             Span::styled(
                                 &task.text,
-                                Style::default().fg(MakoColors::TEXT_SECONDARY),
+                                Style::default().fg(theme.text_secondary),
                             ),
                         ]));
                     } else {
                         lines.push(Line::from(vec![
-                            Span::styled("  ○ ", Style::default().fg(MakoColors::GOLD)),
+                            Span::styled("  ○ ", Style::default().fg(theme.warning)),
                             Span::styled(
                                 &task.text,
                                 Style::default()
@@ -995,25 +1010,25 @@ impl App {
             Span::styled(
                 " / ",
                 Style::default()
-                    .fg(MakoColors::BLUE)
+                    .fg(self.theme.accent)
                     .add_modifier(Modifier::BOLD),
             ),
             Span::raw(&self.search_query),
-            Span::styled("█", Style::default().fg(MakoColors::BLUE)),
+            Span::styled("█", Style::default().fg(self.theme.accent)),
         ]);
 
         frame.render_widget(
             Paragraph::new(search_line).style(
                 Style::default()
-                    .bg(MakoColors::SURFACE)
-                    .fg(MakoColors::TEXT_PRIMARY),
+                    .bg(self.theme.surface)
+                    .fg(self.theme.text_primary),
             ),
             search_area,
         );
     }
 
     fn render_help_overlay(&self, frame: &mut Frame, area: Rect) {
-        let popup_area = centered_rect(60, 18, area);
+        let popup_area = centered_rect(60, 20, area);
         frame.render_widget(Clear, popup_area);
 
         let help_text = vec![
@@ -1031,6 +1046,7 @@ impl App {
             Line::raw("  s         Cycle sort (Recent ↔ Progress)"),
             Line::raw("  /         Open search"),
             Line::raw("  r         Force refresh"),
+            Line::raw("  t         Cycle theme"),
             Line::raw("  d/u       Scroll detail down/up"),
             Line::raw("  [/]       Resize split (left/right)"),
             Line::raw("  ?         Toggle this help"),
@@ -1038,15 +1054,15 @@ impl App {
             Line::raw(""),
             Line::styled(
                 "Press any key to close",
-                Style::default().fg(MakoColors::TEXT_SECONDARY),
+                Style::default().fg(self.theme.text_secondary),
             ),
         ];
 
         let help = Paragraph::new(help_text).block(
             Block::bordered()
                 .title(" Help ")
-                .border_style(Style::default().fg(MakoColors::BLUE))
-                .style(Style::default().bg(MakoColors::SURFACE)),
+                .border_style(Style::default().fg(self.theme.accent))
+                .style(Style::default().bg(self.theme.surface)),
         );
 
         frame.render_widget(help, popup_area);
@@ -1057,36 +1073,36 @@ impl App {
 // Standalone helper functions
 // ─────────────────────────────────────────────────────────
 
-fn status_span(status: &Status) -> Text<'static> {
+fn status_span(status: &Status, theme: &Theme) -> Text<'static> {
     let (label, style) = match status {
         Status::InProgress => (
             "⚙ ACT",
             Style::default()
-                .fg(MakoColors::BLUE)
+                .fg(theme.accent)
                 .add_modifier(Modifier::BOLD),
         ),
         Status::Blocked => (
             "⚠ BLK",
             Style::default()
-                .fg(MakoColors::GOLD)
+                .fg(theme.warning)
                 .add_modifier(Modifier::BOLD),
         ),
-        Status::Complete => ("✓ DON", Style::default().fg(MakoColors::SUCCESS)),
-        Status::New => ("○ NEW", Style::default().fg(MakoColors::TEXT_SECONDARY)),
+        Status::Complete => ("✓ DON", Style::default().fg(theme.success)),
+        Status::New => ("○ NEW", Style::default().fg(theme.text_secondary)),
     };
     Text::from(Span::styled(label, style))
 }
 
-fn progress_bar_text(percent: f32, status: &Status) -> Text<'static> {
+fn progress_bar_text(percent: f32, status: &Status, theme: &Theme) -> Text<'static> {
     let width: usize = 8;
     let filled = ((percent / 100.0) * width as f32).round() as usize;
     let empty = width.saturating_sub(filled);
 
     let color = match status {
-        Status::Complete => MakoColors::SUCCESS,
-        Status::Blocked => MakoColors::GOLD,
-        _ if percent > 0.0 => MakoColors::BLUE,
-        _ => MakoColors::TEXT_SECONDARY,
+        Status::Complete => theme.progress_done,
+        Status::Blocked => theme.progress_blocked,
+        _ if percent > 0.0 => theme.progress_active,
+        _ => theme.progress_new,
     };
 
     let bar = format!("{}{} {:>3.0}%", "█".repeat(filled), "░".repeat(empty), percent);

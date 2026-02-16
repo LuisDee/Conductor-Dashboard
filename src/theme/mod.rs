@@ -1,3 +1,3 @@
 pub mod colors;
 
-pub use colors::MakoColors;
+pub use colors::Theme;
