@@ -11,7 +11,8 @@ fn test_filter_mode_cycles() {
     assert_eq!(FilterMode::All.next(), FilterMode::Active);
     assert_eq!(FilterMode::Active.next(), FilterMode::Blocked);
     assert_eq!(FilterMode::Blocked.next(), FilterMode::Complete);
-    assert_eq!(FilterMode::Complete.next(), FilterMode::All);
+    assert_eq!(FilterMode::Complete.next(), FilterMode::New);
+    assert_eq!(FilterMode::New.next(), FilterMode::All);
 }
 
 #[test]
@@ -297,6 +298,7 @@ fn test_filter_mode_labels() {
     assert_eq!(FilterMode::Active.label(), "Active");
     assert_eq!(FilterMode::Blocked.label(), "Blocked");
     assert_eq!(FilterMode::Complete.label(), "Done");
+    assert_eq!(FilterMode::New.label(), "New");
 }
 
 #[test]

@@ -365,7 +365,7 @@ Refactor Slack Chatbot to use server-side session state and code-driven UI, elim
 
 ---
 
-## [ ] Track: Compliance Workflow Enhancements
+## [x] Track: Compliance Workflow Enhancements ✅ COMPLETE
 *Link: [./conductor/tracks/compliance_enhancements_20260127/](./conductor/tracks/compliance_enhancements_20260127/)*
 **Priority**: High
 **Tags**: compliance, auto-approval, smf16
@@ -419,7 +419,7 @@ Detailed end to end testing and initial UAT
 
 ---
 
-## [ ] Track: entra integration_20251230
+## [x] Track: entra integration_20251230 ✅ COMPLETE
 *Link: [./conductor/tracks/entra_integration_20251230/](./conductor/tracks/entra_integration_20251230/)*
 **Priority**: Low
 **Tags**: backlog
@@ -499,7 +499,7 @@ Fix risk assessment bugs (derivative/leveraged auto-approval, question skipping)
 
 ---
 
-## [ ] Track: Risk Scoring Overhaul & Oracle Position Enrichment
+## [x] Track: Risk Scoring Overhaul & Oracle Position Enrichment ✅ COMPLETE
 *Link: [./conductor/tracks/risk_scoring_overhaul_20260126/](./conductor/tracks/risk_scoring_overhaul_20260126/)*
 **Priority**: High
 **Tags**: risk-scoring, oracle, compliance
@@ -854,11 +854,11 @@ Iterative track for addressing small bugs, UI tweaks, and system hygiene as they
 **Initial Items**:
 - ✅ Enhanced logging visibility (pad-main-logs.py)
 - ✅ Unignored scripts/ directory
-- ⏳ Hide "SMF16 Required: None" from Slack summary (Pending Discussion)
+- ⏳ Hide "SMF16 Required: None" from Slack summary (Pending Discussion) ✅ COMPLETE
 
 ---
 
-## [ ] Track: Web Search Fallback for Price Discovery
+## [x] Track: Web Search Fallback for Price Discovery ✅ COMPLETE
 *Link: [./conductor/tracks/web_search_price_discovery_fallback_20260211/](./conductor/tracks/web_search_price_discovery_fallback_20260211/)*
 **Priority**: Medium
 **Tags**: chatbot, market-data, web-search, adk, gemini-3-flash, price-discovery
@@ -867,7 +867,7 @@ Iterative track for addressing small bugs, UI tweaks, and system hygiene as they
 Implement a secondary price discovery mechanism using Google ADK and Gemini 3 Flash to find market prices via web search when the primary EODHD API fails.
 
 ---
-## [ ] Track: Price Resolution Strategy
+## [x] Track: Price Resolution Strategy ✅ COMPLETE
 *Link: [./conductor/tracks/price_resolution_strategy_20260208/](./conductor/tracks/price_resolution_strategy_20260208/)*
 **Priority**: Low
 **Tags**: chatbot, market-data, ux, future
@@ -1033,7 +1033,7 @@ Fixed 'MessageInfo' attribute error. Discovered second error in AuditLogger.
 
 Fix AttributeError in AuditLogger call within the email poller.
 
-## [ ] Track: Environment Configuration & Code Robustness Remediation
+## [x] Track: Environment Configuration & Code Robustness Remediation ✅ COMPLETE
 *Link: [./conductor/tracks/env_config_remediation_20260212/](./conductor/tracks/env_config_remediation_20260212/)*
 **Priority**: High
 **Tags**: backend, configuration, bugfix, decoupling
@@ -1057,15 +1057,16 @@ Fix regressions in environment variable handling and model properties to ensure 
 
 ### Wave 1: Production Blockers (CRITICAL)
 
-## [-] Track: Security & Authentication Hardening - IN PROGRESS (3/5 findings)
+## [x] Track: Security & Authentication Hardening ✅ COMPLETE
 *Link: [./conductor/tracks/security_auth_hardening_20260212/](./conductor/tracks/security_auth_hardening_20260212/)*
 **Priority**: Critical
 **Tags**: security, authentication, production-blocker
-**Status**: In Progress
-**Branch**: `fix/surgical-data-integrity` (Finding #5), `fix/wave2-safe-fixes` (Findings #1, #4)
+**Status**: Complete
+**Branch**: `fix/surgical-data-integrity` (Finding #5), `fix/wave2-safe-fixes` (Findings #1, #4), `fix/security-auth-hardening-remaining` (Findings #2, #3)
+**Completed**: 2026-02-17
 
-Fix CRITICAL security findings: ~~dev auth bypass in production~~, CORS wildcard with credentials, IAP JWT not verified, ~~terminated employees can authenticate~~, ~~hardcoded API token~~.
-**Done**: Finding #5 (hardcoded EODHD token removed), Finding #1 (dev header gated to import.meta.env.DEV), Finding #4 (terminated employee end_date check in auth). **Remaining**: Findings #2-3.
+Fix CRITICAL security findings: ~~dev auth bypass in production~~, ~~CORS wildcard with credentials~~, ~~IAP JWT not verified~~, ~~terminated employees can authenticate~~, ~~hardcoded API token~~.
+All 5/5 findings resolved. Finding #2: CORS wildcard replaced with configurable allowlist (`cors_allowed_origins`). Finding #3: IAP JWT verification via `X-Goog-IAP-JWT-Assertion` with signature validation, issuer check, and graceful fallback. 29 security tests added.
 
 ---
 

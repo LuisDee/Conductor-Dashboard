@@ -36,6 +36,14 @@ pub enum InputMode {
     Help,
 }
 
+/// Which pane currently has keyboard focus.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub enum FocusPane {
+    #[default]
+    TrackList,
+    Detail,
+}
+
 /// Core application state.
 pub struct App {
     // Core data
@@ -53,6 +61,7 @@ pub struct App {
     pub detail_total_lines: u16,
     pub split_percent: u16,
     pub detail_maximised: bool,
+    pub focus: FocusPane,
 
     // Theme
     pub theme: Theme,
@@ -94,6 +103,7 @@ impl App {
             detail_total_lines: 0,
             split_percent: 45,
             detail_maximised: false,
+            focus: FocusPane::TrackList,
             theme: Theme::mako(),
             watcher_active: !no_watch,
             no_watch,
@@ -236,6 +246,13 @@ impl App {
                 };
                 return Action::Continue;
             }
+            KeyCode::Tab if self.mode == InputMode::Normal => {
+                self.focus = match self.focus {
+                    FocusPane::TrackList => FocusPane::Detail,
+                    FocusPane::Detail => FocusPane::TrackList,
+                };
+                return Action::Continue;
+            }
             KeyCode::Esc => {
                 match self.mode {
                     InputMode::Search => {
@@ -248,6 +265,9 @@ impl App {
                     }
                     InputMode::Normal if self.detail_maximised => {
                         self.detail_maximised = false;
+                    }
+                    InputMode::Normal if self.focus == FocusPane::Detail => {
+                        self.focus = FocusPane::TrackList;
                     }
                     _ => {}
                 }
@@ -283,8 +303,21 @@ impl App {
 
         // Normal mode keys
         match key.code {
-            KeyCode::Down | KeyCode::Char('j') => self.select_next(),
-            KeyCode::Up | KeyCode::Char('k') => self.select_previous(),
+            KeyCode::Down | KeyCode::Char('j') => match self.focus {
+                FocusPane::TrackList => self.select_next(),
+                FocusPane::Detail => {
+                    self.detail_scroll = self
+                        .detail_scroll
+                        .saturating_add(1)
+                        .min(self.detail_total_lines.saturating_sub(5));
+                }
+            },
+            KeyCode::Up | KeyCode::Char('k') => match self.focus {
+                FocusPane::TrackList => self.select_previous(),
+                FocusPane::Detail => {
+                    self.detail_scroll = self.detail_scroll.saturating_sub(1);
+                }
+            },
             KeyCode::Home => self.select_first(),
             KeyCode::End => self.select_last(),
             KeyCode::Enter => self.detail_maximised = true,
@@ -319,6 +352,9 @@ impl App {
             }
             KeyCode::Char('u') => {
                 self.detail_scroll = self.detail_scroll.saturating_sub(5);
+            }
+            KeyCode::Char('x') => {
+                self.toggle_track_complete();
             }
             _ => {}
         }
@@ -440,6 +476,7 @@ impl App {
                 FilterMode::Active => track.status == Status::InProgress,
                 FilterMode::Blocked => track.status == Status::Blocked,
                 FilterMode::Complete => track.status == Status::Complete,
+                FilterMode::New => track.status == Status::New,
             })
             .filter(|(id, track)| {
                 if search_lower.is_empty() {
@@ -485,6 +522,146 @@ impl App {
                 self.selected_track = self.filtered_track_ids.first().cloned();
             }
         }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // Toggle track complete
+    // ─────────────────────────────────────────────────────────
+
+    fn toggle_track_complete(&mut self) {
+        let Some(track_id) = self.selected_track.clone() else {
+            return;
+        };
+        let Some(track) = self.tracks.get(&track_id) else {
+            return;
+        };
+
+        let completing = track.status != Status::Complete;
+        let title = track.title.clone();
+
+        // Write to tracks.md
+        if let Err(e) = self.write_tracks_md_status(&track_id, completing) {
+            self.error_message = Some((format!("Failed to update tracks.md: {e}"), Instant::now()));
+            return;
+        }
+
+        // Write to metadata.json (if it exists)
+        if let Err(e) = self.write_metadata_status(&track_id, completing) {
+            self.error_message = Some((
+                format!("Failed to update metadata.json: {e}"),
+                Instant::now(),
+            ));
+            return;
+        }
+
+        // Update in-memory state
+        let track = self.tracks.get_mut(&track_id).expect("track exists");
+        if completing {
+            track.status = Status::Complete;
+            track.checkbox_status = crate::model::CheckboxStatus::Checked;
+            track.mark_all_tasks_complete();
+        } else {
+            track.status = Status::New;
+            track.checkbox_status = crate::model::CheckboxStatus::Unchecked;
+        }
+
+        let verb = if completing { "complete" } else { "new" };
+        self.error_message = Some((format!("✓ Marked '{}' as {}", title, verb), Instant::now()));
+        self.recompute_filtered_tracks();
+    }
+
+    fn write_tracks_md_status(
+        &self,
+        track_id: &TrackId,
+        completing: bool,
+    ) -> Result<(), std::io::Error> {
+        let tracks_path = self.conductor_dir.join("tracks.md");
+        let content = std::fs::read_to_string(&tracks_path)?;
+        let lines: Vec<&str> = content.lines().collect();
+        let mut result: Vec<String> = Vec::with_capacity(lines.len());
+
+        let track_id_str = track_id.as_str();
+        let mut i = 0;
+        while i < lines.len() {
+            let line = lines[i];
+
+            // Look for a heading line followed (within a few lines) by a *Link: line containing our track ID
+            if line.starts_with("## ") || line.starts_with("- ") {
+                // Check the next few lines for a *Link: containing our track ID
+                let mut found = false;
+                for lookahead in 1..=5 {
+                    if i + lookahead < lines.len()
+                        && lines[i + lookahead].contains("*Link:")
+                        && lines[i + lookahead].contains(track_id_str)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if found {
+                    let mut modified = line.to_string();
+                    if completing {
+                        // Replace ## [ ] or ## [~] or ## [-] with ## [x]
+                        modified = modified
+                            .replace("## [ ]", "## [x]")
+                            .replace("## [~]", "## [x]")
+                            .replace("## [-]", "## [x]")
+                            .replace("- [ ]", "- [x]")
+                            .replace("- [~]", "- [x]")
+                            .replace("- [-]", "- [x]");
+                        if !modified.contains("✅ COMPLETE") {
+                            modified = format!("{} ✅ COMPLETE", modified);
+                        }
+                    } else {
+                        // Replace ## [x] with ## [ ]
+                        modified = modified
+                            .replace("## [x]", "## [ ]")
+                            .replace("- [x]", "- [ ]");
+                        modified = modified.replace(" ✅ COMPLETE", "");
+                    }
+                    result.push(modified);
+                } else {
+                    result.push(line.to_string());
+                }
+            } else {
+                result.push(line.to_string());
+            }
+            i += 1;
+        }
+
+        let mut output = result.join("\n");
+        if content.ends_with('\n') {
+            output.push('\n');
+        }
+        std::fs::write(&tracks_path, output)
+    }
+
+    fn write_metadata_status(
+        &self,
+        track_id: &TrackId,
+        completing: bool,
+    ) -> Result<(), std::io::Error> {
+        let meta_path = self
+            .conductor_dir
+            .join("tracks")
+            .join(track_id.as_str())
+            .join("metadata.json");
+
+        if !meta_path.exists() {
+            return Ok(());
+        }
+
+        let content = std::fs::read_to_string(&meta_path)?;
+        let mut value: serde_json::Value = serde_json::from_str(&content)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
+
+        let new_status = if completing { "completed" } else { "new" };
+        value["status"] = serde_json::Value::String(new_status.to_string());
+
+        let output = serde_json::to_string_pretty(&value)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string()))?;
+        std::fs::write(&meta_path, format!("{}\n", output))
     }
 
     // ─────────────────────────────────────────────────────────
@@ -651,10 +828,11 @@ impl App {
         frame.render_widget(Paragraph::new(counts), counts_area);
 
         let filter_label = match self.filter {
-            FilterMode::All => "[All]  Active  Blocked  Done",
-            FilterMode::Active => " All  [Active] Blocked  Done",
-            FilterMode::Blocked => " All   Active [Blocked] Done",
-            FilterMode::Complete => " All   Active  Blocked [Done]",
+            FilterMode::All => "[All]  Active  Blocked  Done  New",
+            FilterMode::Active => " All  [Active] Blocked  Done  New",
+            FilterMode::Blocked => " All   Active [Blocked] Done  New",
+            FilterMode::Complete => " All   Active  Blocked [Done] New",
+            FilterMode::New => " All   Active  Blocked  Done [New]",
         };
         let sort_label = match self.sort {
             SortMode::Updated => "[Recent] Progress",
@@ -696,12 +874,16 @@ impl App {
         let shortcuts = Line::from(vec![
             Span::styled(" ↑↓", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Navigate  "),
+            Span::styled("Tab", Style::default().add_modifier(Modifier::BOLD)),
+            Span::raw(" Focus  "),
             Span::styled("Enter", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Expand  "),
             Span::styled("f", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Filter  "),
             Span::styled("s", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Sort  "),
+            Span::styled("x", Style::default().add_modifier(Modifier::BOLD)),
+            Span::raw(" Done  "),
             Span::styled("/", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(" Search  "),
             Span::styled("t", Style::default().add_modifier(Modifier::BOLD)),
@@ -780,11 +962,17 @@ impl App {
             Constraint::Length(6),
         ];
 
+        let list_border_color = if self.focus == FocusPane::TrackList {
+            theme.accent
+        } else {
+            theme.border
+        };
+
         let table = Table::new(rows, widths)
             .header(header)
             .block(
                 Block::bordered()
-                    .border_style(Style::default().fg(theme.border))
+                    .border_style(Style::default().fg(list_border_color))
                     .title(" Tracks "),
             )
             .row_highlight_style(
@@ -801,8 +989,14 @@ impl App {
     fn render_detail_panel(&mut self, frame: &mut Frame, area: Rect) {
         let theme = self.theme;
 
+        let detail_border_color = if self.focus == FocusPane::Detail {
+            theme.accent
+        } else {
+            theme.border
+        };
+
         let block = Block::bordered()
-            .border_style(Style::default().fg(theme.border))
+            .border_style(Style::default().fg(detail_border_color))
             .title(" Detail ");
         let inner = block.inner(area);
         frame.render_widget(block, area);
@@ -1031,16 +1225,18 @@ impl App {
                 Style::default().add_modifier(Modifier::BOLD),
             ),
             Line::raw(""),
-            Line::raw("  ↑/k       Move selection up"),
-            Line::raw("  ↓/j       Move selection down"),
+            Line::raw("  ↑/k       Move up (list) / Scroll up (detail)"),
+            Line::raw("  ↓/j       Move down (list) / Scroll down (detail)"),
+            Line::raw("  Tab       Switch pane focus"),
             Line::raw("  Home/End  First/last track"),
             Line::raw("  Enter     Maximise detail panel"),
-            Line::raw("  Esc       Return to split view / close"),
-            Line::raw("  f         Cycle filter (All → Active → Blocked → Done)"),
+            Line::raw("  Esc       Return to split view / reset focus"),
+            Line::raw("  f         Cycle filter (All → Active → Blocked → Done → New)"),
             Line::raw("  s         Cycle sort (Recent ↔ Progress)"),
             Line::raw("  /         Open search"),
             Line::raw("  r         Force refresh"),
             Line::raw("  t         Cycle theme"),
+            Line::raw("  x         Toggle track complete"),
             Line::raw("  d/u       Scroll detail down/up"),
             Line::raw("  [/]       Resize split (left/right)"),
             Line::raw("  ?         Toggle this help"),

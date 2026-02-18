@@ -1,6 +1,6 @@
 use std::fmt;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 // ---------------------------------------------------------------------------
 // Track status (from tracks.md checkbox + metadata)
@@ -41,6 +41,17 @@ impl<'de> Deserialize<'de> for Status {
     {
         let s = String::deserialize(deserializer)?;
         Ok(Status::from_str_loose(&s))
+    }
+}
+
+impl Serialize for Status {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str(match self {
+            Self::New => "new",
+            Self::InProgress => "in_progress",
+            Self::Blocked => "blocked",
+            Self::Complete => "complete",
+        })
     }
 }
 
@@ -96,6 +107,17 @@ impl Priority {
     }
 }
 
+impl Serialize for Priority {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str(match self {
+            Self::Critical => "critical",
+            Self::High => "high",
+            Self::Medium => "medium",
+            Self::Low => "low",
+        })
+    }
+}
+
 impl fmt::Display for Priority {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(self.label())
@@ -116,7 +138,8 @@ impl<'de> Deserialize<'de> for Priority {
 // Checkbox status (from tracks.md H2 headings)
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum CheckboxStatus {
     #[default]
     Unchecked, // [ ]
@@ -139,7 +162,8 @@ impl CheckboxStatus {
 // Phase status (derived from task completion within a phase)
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum PhaseStatus {
     #[default]
     Pending,
@@ -202,6 +226,18 @@ impl TrackType {
     }
 }
 
+impl Serialize for TrackType {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str(match self {
+            Self::Feature => "feature",
+            Self::Bug => "bug",
+            Self::Migration => "migration",
+            Self::Refactor => "refactor",
+            Self::Other => "other",
+        })
+    }
+}
+
 impl fmt::Display for TrackType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(self.label())
@@ -229,6 +265,7 @@ pub enum FilterMode {
     Active,
     Blocked,
     Complete,
+    New,
 }
 
 impl FilterMode {
@@ -237,7 +274,8 @@ impl FilterMode {
             Self::All => Self::Active,
             Self::Active => Self::Blocked,
             Self::Blocked => Self::Complete,
-            Self::Complete => Self::All,
+            Self::Complete => Self::New,
+            Self::New => Self::All,
         }
     }
 
@@ -247,6 +285,7 @@ impl FilterMode {
             Self::Active => "Active",
             Self::Blocked => "Blocked",
             Self::Complete => "Done",
+            Self::New => "New",
         }
     }
 }

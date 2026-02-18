@@ -66,6 +66,7 @@ async fn main() -> color_eyre::Result<()> {
         "active" => FilterMode::Active,
         "blocked" => FilterMode::Blocked,
         "complete" => FilterMode::Complete,
+        "new" => FilterMode::New,
         _ => FilterMode::All,
     };
 

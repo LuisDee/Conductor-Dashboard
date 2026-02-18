@@ -25,17 +25,30 @@ serde_yaml = "0.9"
 # Date/time
 chrono = { version = "0.4", features = ["serde"] }
 
+# MCP server
+rmcp = { version = "0.16", features = ["server", "transport-io"] }
+schemars = { version = "1.0", features = ["chrono04"] }
+
 # CLI
 clap = { version = "4", features = ["derive"] }
 
 # Error handling
 thiserror = "2"
 color-eyre = "0.6"
+anyhow = "1"
 
 # Logging
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-appender = "0.2"
+
+[[bin]]
+name = "conductor-dashboard"
+path = "src/main.rs"
+
+[[bin]]
+name = "conductor-mcp"
+path = "src/bin/conductor_mcp.rs"
 
 [dev-dependencies]
 pretty_assertions = "1"

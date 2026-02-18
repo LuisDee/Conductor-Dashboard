@@ -1,6 +1,7 @@
 use std::fmt;
 
 use chrono::{DateTime, Utc};
+use serde::Serialize;
 
 use super::enums::{CheckboxStatus, PhaseStatus, Priority, Status, TrackType};
 
@@ -8,7 +9,8 @@ use super::enums::{CheckboxStatus, PhaseStatus, Priority, Status, TrackType};
 // TrackId — newtype for type safety
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
+#[serde(transparent)]
 pub struct TrackId(pub String);
 
 impl TrackId {
@@ -43,7 +45,7 @@ impl From<&str> for TrackId {
 // Track — the core data model
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Track {
     pub id: TrackId,
     pub title: String,
@@ -172,7 +174,7 @@ impl Default for Track {
 // PlanPhase / PlanTask — parsed from plan.md
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PlanPhase {
     pub name: String,
     pub status: PhaseStatus,
@@ -196,7 +198,7 @@ impl PlanPhase {
 // PlanTask
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PlanTask {
     pub text: String,
     pub done: bool,
