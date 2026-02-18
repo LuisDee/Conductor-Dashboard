@@ -1,0 +1,11 @@
+    npx @modelcontextprotocol/inspector cargo run --bin conductor-mcp -- --conductor-dir ./conductor
+
+    # Add to Claude Code config (.mcp.json)
+    {
+      "mcpServers": {
+        "conductor": {
+          "command": "cargo",
+          "args": ["run", "--bin", "conductor-mcp", "--", "--conductor-dir", "./conductor"]
+        }
+      }
+    }
