@@ -80,6 +80,7 @@ pub fn parse_index_content(content: &str) -> Vec<IndexEntry> {
     let mut current_entry: Option<IndexEntry> = None;
     let mut body_text = String::new();
     let mut in_paragraph = false;
+    let mut in_item = false;
     let mut in_strong = false;
     let mut strong_text = String::new();
     let mut field_key: Option<String> = None;
@@ -131,6 +132,15 @@ pub fn parse_index_content(content: &str) -> Vec<IndexEntry> {
                 field_key = None;
             }
 
+            // List item boundaries (for `- **Key:** value` style fields)
+            Event::Start(Tag::Item) => {
+                in_item = true;
+            }
+            Event::End(TagEnd::Item) => {
+                in_item = false;
+                field_key = None;
+            }
+
             // Italic text (for Link lines: *Link: [...]*)
             Event::Start(Tag::Emphasis) => {}
             Event::End(TagEnd::Emphasis) => {}
@@ -153,7 +163,7 @@ pub fn parse_index_content(content: &str) -> Vec<IndexEntry> {
                 } else if in_strong {
                     strong_text.push_str(&text);
                 } else if let Some(ref mut entry) = current_entry {
-                    if in_paragraph {
+                    if in_paragraph || in_item {
                         // Process field values
                         if let Some(ref key) = field_key {
                             let value = text.trim();
@@ -268,6 +278,12 @@ fn apply_field(entry: &mut IndexEntry, key: &str, value: &str) {
                 entry.branch = Some(branch);
             }
         }
+        "ID" | "Id" => {
+            let id = value.trim_matches('`').to_string();
+            if !id.is_empty() && entry.id.as_str().is_empty() {
+                entry.id = TrackId::new(id);
+            }
+        }
         "Dependencies" | "Depends on" => {
             entry.dependencies = value
                 .split(',')
@@ -340,6 +356,65 @@ mod tests {
         assert_eq!(
             extract_track_id_from_link("./tracks/otel_collector_20260212/"),
             Some("otel_collector_20260212".to_string())
+        );
+    }
+
+    #[test]
+    fn test_parse_id_field_in_list_items() {
+        let md = r#"# Tracks
+
+## [x] Track: Context Layer (Phase B)
+- **ID:** 02_context_layer
+- **Dependencies:** 01_foundation
+
+---
+
+## [~] Track: Metadata Enrichment
+- **ID:** 06_metadata_enrichment
+- **Dependencies:** 02_context_layer
+"#;
+        let entries = parse_index_content(md);
+        assert_eq!(entries.len(), 2);
+
+        assert_eq!(entries[0].title, "Context Layer (Phase B)");
+        assert_eq!(entries[0].id.as_str(), "02_context_layer");
+        assert_eq!(entries[0].checkbox, CheckboxStatus::Checked);
+        assert_eq!(entries[0].dependencies, vec!["01_foundation"]);
+
+        assert_eq!(entries[1].title, "Metadata Enrichment");
+        assert_eq!(entries[1].id.as_str(), "06_metadata_enrichment");
+        assert_eq!(entries[1].checkbox, CheckboxStatus::InProgress);
+        assert_eq!(entries[1].dependencies, vec!["02_context_layer"]);
+    }
+
+    #[test]
+    fn test_id_field_plain_paragraph() {
+        let md = r#"# Tracks
+
+## [ ] Track: Some Track
+**ID**: my_track_id
+**Priority**: High
+"#;
+        let entries = parse_index_content(md);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].id.as_str(), "my_track_id");
+        assert_eq!(entries[0].priority, Priority::High);
+    }
+
+    #[test]
+    fn test_link_id_takes_precedence_over_field() {
+        let md = r#"# Tracks
+
+## [x] Track: Has Both
+*Link: [./conductor/tracks/from_link/](./conductor/tracks/from_link/)*
+- **ID:** from_field
+"#;
+        let entries = parse_index_content(md);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(
+            entries[0].id.as_str(),
+            "from_link",
+            "link-based ID should take precedence over **ID:** field"
         );
     }
 

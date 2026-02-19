@@ -47,7 +47,7 @@ fn test_known_incomplete_track_parsed() {
         .expect("compliance_enhancements_20260127 should be in index");
 
     assert_eq!(track.title, "Compliance Workflow Enhancements");
-    assert_eq!(track.checkbox_status, CheckboxStatus::Unchecked);
+    assert_eq!(track.checkbox_status, CheckboxStatus::Checked);
 }
 
 #[test]
@@ -265,6 +265,109 @@ fn test_no_panics_on_full_load() {
         result.is_ok(),
         "full load should not error: {:?}",
         result.err()
+    );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// nl2sql-style tracks.md (- **ID:** field in list items)
+// ═══════════════════════════════════════════════════════════════════════════
+
+#[test]
+fn test_parse_nl2sql_style_index() {
+    let md = r#"# Project Tracks
+
+## [x] Track: Foundation (Phase A)
+- **ID:** 01_foundation
+- **Wave:** 1
+- **Priority:** High
+- **Status:** Completed
+- **Dependencies:** none
+
+---
+
+## [x] Track: Context Layer (Phase B)
+- **ID:** 02_context_layer
+- **Wave:** 2
+- **Priority:** High
+- **Status:** Completed
+- **Dependencies:** 01_foundation
+
+---
+
+## [x] Track: Agent Tools
+- **ID:** 03_agent_tools
+- **Wave:** 3
+- **Priority:** High
+- **Status:** Completed
+- **Dependencies:** 02_context_layer
+
+---
+
+## [x] Track: Agent Logic
+- **ID:** 04_agent_logic
+- **Wave:** 4
+- **Priority:** High
+- **Status:** Completed
+- **Dependencies:** 03_agent_tools
+
+---
+
+## [x] Track: Eval & Hardening (Phase E/F)
+- **ID:** 05_eval_hardening
+- **Wave:** 5
+- **Priority:** Medium
+- **Status:** Completed
+- **Dependencies:** 04_agent_logic
+
+---
+
+## [ ] Track: Metadata Enrichment
+- **ID:** 06_metadata_enrichment
+- **Wave:** 6
+- **Priority:** Medium
+- **Dependencies:** 02_context_layer
+
+---
+
+## [ ] Track: Production Deployment
+- **ID:** 07_production
+- **Wave:** 7
+- **Priority:** High
+- **Dependencies:** 05_eval_hardening, 06_metadata_enrichment
+"#;
+
+    let entries = parser::index::parse_index_content(md);
+    assert_eq!(
+        entries.len(),
+        7,
+        "expected 7 tracks, got {}",
+        entries.len()
+    );
+
+    // Verify each track got its own ID (the BTreeMap dedup bug would collapse them)
+    let ids: Vec<&str> = entries.iter().map(|e| e.id.as_str()).collect();
+    assert_eq!(
+        ids,
+        vec![
+            "01_foundation",
+            "02_context_layer",
+            "03_agent_tools",
+            "04_agent_logic",
+            "05_eval_hardening",
+            "06_metadata_enrichment",
+            "07_production",
+        ]
+    );
+
+    // Spot-check fields
+    assert_eq!(entries[0].checkbox, CheckboxStatus::Checked);
+    assert_eq!(entries[0].priority, Priority::High);
+
+    assert_eq!(entries[6].title, "Production Deployment");
+    assert_eq!(entries[6].checkbox, CheckboxStatus::Unchecked);
+    assert_eq!(
+        entries[6].dependencies,
+        vec!["05_eval_hardening", "06_metadata_enrichment"]
     );
 }
 
